@@ -1,0 +1,288 @@
+/*
+#96C0E9 blue
+#B1E010 green
+#414141 black
+#9e9e9e gray
+*/
+
+.backingDiv{
+        color: white;
+}
+
+.outerCalcDiv{
+        background-color: black;
+        border-radius: 15.2px;
+        width: 46%;
+        height: 100vh;
+        margin-left: auto;
+        margin-right: auto;
+}
+
+.screenDiv{
+        background-color: white;
+        width: 95%;
+        height: 20%;
+        border-radius: 15.2px;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        top: 10px;
+}
+
+.prevCalcDiv{
+        background-color: white;
+        color: black;
+        border-radius: 15.2px;
+        display: block;
+        padding-top: 2vh;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        width: 100%;
+        height: 7vh;
+
+}
+
+
+.calcResDiv{
+        width: 46vw;
+        height: 7vh;
+        display: block;
+}
+
+.calc{
+        color: black;
+        font-family: 'Montserrat', sans-serif;
+        flex: 50%;
+        margin-left: 3vw;
+        font-size: 16px;
+}
+
+.prevResult{
+        color: black;
+        font-family: 'Montserrat', sans-serif;
+        flex: 50%;
+        text-align: right;
+        margin-right: 5vw;
+        font-size: 16px;
+}
+
+#userInput{
+        color: black;
+        border-style: none;
+        border-color: #9e9e9e;
+        height: 3vh;
+        width: 50%;
+        border-radius: 15.2px;
+        padding: 5px;
+        font-size: 18px;
+        font-family: 'Montserrat', sans-serif;
+}
+
+#userInput:focus{
+        outline: none;
+}
+
+.currCalc{
+        margin-top: 6vh;
+        margin-left: 3vw;
+        position: relative;
+}
+
+.currCalc i{
+        position: absolute;
+        width: 1px;
+        height: 80%;
+        background-color: gray;
+        left: 5px;
+        top: 10%;
+        animation-name: blink;
+        animation-duration: 800ms;
+        animation-iteration-count: infinite;
+        opacity: 1;
+}
+
+.currCalc input:focus + i{
+        display: none;
+}
+
+@keyframes blink{
+        from{opacity: 1;}
+        to {opacity: 0;}
+}
+
+.screenDivider{
+        border-top: 4px solid #9e9e9e;
+        border-radius: 15.2px;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+}
+
+.buttonDiv{
+        display: grid;
+        grid-template-columns : 90px 90px 90px 90px 90px;
+        grid-template-rows: 74px 74px 74px 74px 74px 74px 74px 74px 74px 74px;
+        width: 95%;
+        height: 77%;
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+        column-gap: 10px;
+}
+
+.aboveBtn{
+        display: flex;
+        width: 100%;
+        height: 20px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 14px;
+}
+
+.secFunc{
+        flex: 1;
+        text-align: left;
+        width: 100%;
+        padding-left: 10px;
+        color: #96C0E9;
+}
+
+.alphaFunc{
+        flex: 1;
+        text-align: right;
+        padding-right: 10px;
+        color: #B1E010;
+        width: 100%;
+}
+
+.bttn{
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 82%;
+        height: 25%;
+        border-radius: 15.2px;
+        border-style: solid;
+        border-color: black;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 16px;
+        color: black;
+}
+
+.white{
+        background-color: #F9F7F5;
+}
+
+.black{
+        background-color: #414141;
+        color: white;
+}
+
+.blue{
+        background-color: #96C0E9;
+}
+
+.green{
+        background-color: #B1E010;
+}
+
+
+#rotateMode{
+        grid-column-start: 4;
+        grid-column-end: 6;
+        grid-row-start: 2;
+        grid-row-end: 4;
+
+        border-radius: 50%;
+        width: 125px;
+        height: 125px;
+        background-color: #F9F7F5;
+        color:transparent;
+        position:relative;
+        margin-left: auto;
+        margin-right: auto;
+}
+      
+#left{
+        position:absolute;
+        top:35%;
+        left:0px;
+        transform: rotate(270deg);
+}
+      
+#right{
+        position:absolute;
+        top:35%;
+        right:0px;
+        transform: rotate(90deg);
+}
+      
+#up{
+        position:absolute;
+        top:0px;
+        left:35%;
+}
+      
+#down{
+        position:absolute;
+        bottom:0px;
+        left:35%;
+        transform: rotate(180deg);
+}
+
+.arrowBtns{
+        border: none;
+        width: 40px;
+        height: 40px;
+        background-color: transparent;
+}
+
+#secBtnDiv{
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 2;
+        grid-row-end: 3;
+}
+
+#modeBtnDiv{
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 2;
+        grid-row-end: 3;  
+}
+
+#delBtnDiv{
+        grid-column-start: 3;
+        grid-column-end: 4;
+        grid-row-start: 2;
+        grid-row-end: 3;  
+}
+
+#alphaBtnDiv{
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 3;
+        grid-row-end: 4;
+}
+
+#xtBtnDiv{
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 3;
+        grid-row-end: 4;
+}
+
+#statBtnDiv{
+        grid-column-start: 3;
+        grid-column-end: 4;
+        grid-row-start: 3;
+        grid-row-end: 4;
+}
+
+.btnDiv{
+        width: 100%;
+        height: 130px;
+}
+
+
+
+
