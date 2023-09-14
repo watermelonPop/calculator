@@ -10,30 +10,26 @@
         <script src="https://kit.fontawesome.com/b7b6d87d91.js" crossorigin="anonymous"></script>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+        <script src="https://unpkg.com/mathjs/lib/browser/math.js"></script>
 </head>
 <body>
         <div class="backingDiv">
                 <div class="outerCalcDiv">
-                        <div class="screenDiv">
+                        <div class="screenDiv" id="normDiv">
                                 <div class="prevCalcDiv">
-                                        <div class="calcResDiv instance1">
-                                                <p class="calc">1242/2688</p> <p class="prevResult">0.4620535714</p>
-                                        </div>
-                                        <div class="calcResDiv instance2">
-                                                <p class="calc">1242/2688</p> <p class="prevResult">0.4620535714</p>
-                                        </div>
-                                        <div class="calcResDiv instance3">
-                                                <p class="calc">1242/2688</p> <p class="prevResult">0.4620535714</p>
-                                        </div>
-                                        <div class="calcResDiv instance4">
-                                                <p class="calc">1242/2688</p> <p class="prevResult">0.4620535714</p>
-                                        </div>
                                 </div>
                                 <hr class="screenDivider">
                                 <div class="currCalc">
                                         <input type="text" id="userInput" autofocus>
                                         <i></i>
                                 </div>
+                        </div>
+                        <div class="screenDiv" id="modeDiv">
+                                <p class="modeMenu">mode</p>
+                                <button id="radianbtn" class="option radianOption" onclick="setRadian(true)">RADIAN</button><button id="degreeBtn" class=" option degreeOption" onclick="setRadian(false)">DEGREE</button>
+                        </div>
+                        <div class="screenDiv" id="offDiv">
+                                <div class="offScreen"></div>
                         </div>
                         <div class="buttonDiv">
                                 <div class="btnDiv" id="y=BtnDiv">
@@ -71,19 +67,19 @@
                                         <div class = "aboveBtn">
                                                 <p class="secFunc"></p><p class="alphaFunc"></p>
                                         </div>
-                                        <button class="bttn blue">2nd</button>
+                                        <button id="secBtn" class="bttn blue" onclick="toggle2nd()">2nd</button>
                                 </div>
                                 <div class="btnDiv" id="modeBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">quit</p>
                                         </div>
-                                        <button class="bttn black">mode</button>
+                                        <button class="bttn black" onclick="modeBtn()">mode</button>
                                 </div>
                                 <div class="btnDiv" id="delBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">ins</p>
                                         </div>
-                                        <button class="bttn black">del</button>
+                                        <button class="bttn black" onclick="deletes()">del</button>
                                 </div>
                                 <div class ='circleBase' id='rotateMode'>
 
@@ -91,16 +87,16 @@
                                         
                                          <button id="right" class="arrowBtns"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
                                          
-                                         <button id="up" class="arrowBtns"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
+                                         <button id="up" class="arrowBtns" onclick="scrollPrev(true)"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
                                          
-                                        <button id="down" class="arrowBtns"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
+                                        <button id="down" class="arrowBtns" onclick="scrollPrev(false)"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
                                         
                                 </div>
                                 <div class="btnDiv" id="alphaBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">A-lock</p>
                                         </div>
-                                        <button class="bttn green">alpha</button>
+                                        <button id="alphaBtn" class="bttn green" onclick="toggleAlpha()">alpha</button>
                                 </div>
                                 <div class="btnDiv" id="xtBtnDiv">
                                         <div class = "aboveBtn">
@@ -118,19 +114,19 @@
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">test</p><p class="alphaFunc">A</p>
                                         </div>
-                                        <button class="bttn black">math</button>
+                                        <button class="bttn black" onclick="mathBtn()">math</button>
                                 </div>
                                 <div class="btnDiv" id="appsBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">angle</p><p class="alphaFunc">B</p>
                                         </div>
-                                        <button class="bttn black">apps</button>
+                                        <button class="bttn black" onclick="appsBtn()">apps</button>
                                 </div>
                                 <div class="btnDiv" id="prgmBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">draw</p><p class="alphaFunc">C</p>
                                         </div>
-                                        <button class="bttn black">prgm</button>
+                                        <button class="bttn black" onclick="prgmBtn()">prgm</button>
                                 </div>
                                 <div class="btnDiv" id="varsBtnDiv">
                                         <div class = "aboveBtn">
@@ -142,187 +138,187 @@
                                         <div class = "aboveBtn">
                                                 <p class="secFunc"></p><p class="alphaFunc"></p>
                                         </div>
-                                        <button class="bttn black">clear</button>
+                                        <button class="bttn black" onclick="clears()">clear</button>
                                 </div>
                                 <div class="btnDiv" id="inverseBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">matrix</p><p class="alphaFunc">D</p>
                                         </div>
-                                        <button class="bttn black">x<sup>-1</sup></button>
+                                        <button class="bttn black" onclick="inverseBtn()">x<sup>-1</sup></button>
                                 </div>
                                 <div class="btnDiv" id="sinBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">sin<sup>-1</sup></p><p class="alphaFunc">E</p>
                                         </div>
-                                        <button class="bttn black">sin</button>
+                                        <button class="bttn black" onclick="sinBtn()">sin</button>
                                 </div>
                                 <div class="btnDiv" id="cosBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">cos<sup>-1</sup></p><p class="alphaFunc">F</p>
                                         </div>
-                                        <button class="bttn black">cos</button>
+                                        <button class="bttn black" onclick="cosBtn()">cos</button>
                                 </div>
                                 <div class="btnDiv" id="tanBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">tan<sup>-1</sup></p><p class="alphaFunc">G</p>
                                         </div>
-                                        <button class="bttn black">tan</button>
+                                        <button class="bttn black" onclick="tanBtn()">tan</button>
                                 </div>
                                 <div class="btnDiv" id="superBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">&pi;</p><p class="alphaFunc">H</p>
                                         </div>
-                                        <button class="bttn black"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
+                                        <button class="bttn black" onclick="superBtn()"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
                                 </div>
                                 <div class="btnDiv" id="squaredBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">&radic;</p><p class="alphaFunc">I</p>
                                         </div>
-                                        <button class="bttn black">x<sup>2</sup></button>
+                                        <button class="bttn black" onclick="squaredBtn()">x<sup>2</sup></button>
                                 </div>
                                 <div class="btnDiv" id="commaBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">EE</p><p class="alphaFunc">J</p>
                                         </div>
-                                        <button class="bttn black">,</button>
+                                        <button class="bttn black" onclick="commaBtn()">,</button>
                                 </div>
                                 <div class="btnDiv" id="frontParenBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">&#123;</p><p class="alphaFunc">K</p>
                                         </div>
-                                        <button class="bttn black">&#40;</button>
+                                        <button class="bttn black" onclick="frontParenBtn()">&#40;</button>
                                 </div>
                                 <div class="btnDiv" id="backParenBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">&#x7d;</p><p class="alphaFunc">L</p>
                                         </div>
-                                        <button class="bttn black">&#41;</button>
+                                        <button class="bttn black" onclick="backParenBtn()">&#41;</button>
                                 </div>
-                                <div class="btnDiv" id="backParenBtnDiv">
+                                <div class="btnDiv" id="divisionBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">e</p><p class="alphaFunc">M</p>
                                         </div>
-                                        <button class="bttn white">&#247;</button>
+                                        <button class="bttn white" onclick="divisionBtn()">&#247;</button>
                                 </div>
                                 <div class="btnDiv" id="logBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">10<sup>x</sup></p><p class="alphaFunc">N</p>
                                         </div>
-                                        <button class="bttn black">log</button>
+                                        <button class="bttn black" onclick="logBtn()">log</button>
                                 </div>
                                 <div class="btnDiv" id="sevenBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">u</p><p class="alphaFunc">O</p>
                                         </div>
-                                        <button class="bttn white">7</button>
+                                        <button class="bttn white" onclick="sevenBtn()">7</button>
                                 </div>
                                 <div class="btnDiv" id="eightBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">v</p><p class="alphaFunc">P</p>
                                         </div>
-                                        <button class="bttn white">8</button>
+                                        <button class="bttn white" onclick="eightBtn()">8</button>
                                 </div>
                                 <div class="btnDiv" id="nineBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">w</p><p class="alphaFunc">Q</p>
                                         </div>
-                                        <button class="bttn white">9</button>
+                                        <button class="bttn white" onclick="nineBtn()">9</button>
                                 </div>
                                 <div class="btnDiv" id="multBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">[</p><p class="alphaFunc">R</p>
                                         </div>
-                                        <button class="bttn white">&#215;</button>
+                                        <button class="bttn white" onclick="multBtn()">&#215;</button>
                                 </div>
                                 <div class="btnDiv" id="lnBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">e<sup>x</sup></p><p class="alphaFunc">S</p>
                                         </div>
-                                        <button class="bttn black">ln</button>
+                                        <button class="bttn black" onclick="lnBtn()">ln</button>
                                 </div>
                                 <div class="btnDiv" id="fourBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">L4</p><p class="alphaFunc">T</p>
                                         </div>
-                                        <button class="bttn white">4</button>
+                                        <button class="bttn white" onclick="fourBtn()">4</button>
                                 </div>
                                 <div class="btnDiv" id="fiveBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">L5</p><p class="alphaFunc">U</p>
                                         </div>
-                                        <button class="bttn white">5</button>
+                                        <button class="bttn white" onclick="fiveBtn()">5</button>
                                 </div>
                                 <div class="btnDiv" id="sixBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">L6</p><p class="alphaFunc">V</p>
                                         </div>
-                                        <button class="bttn white">6</button>
+                                        <button class="bttn white" onclick="sixBtn()">6</button>
                                 </div>
                                 <div class="btnDiv" id="subBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">]</p><p class="alphaFunc">W</p>
                                         </div>
-                                        <button class="bttn white">-</button>
+                                        <button class="bttn white" onclick="subBtn()">-</button>
                                 </div>
                                 <div class="btnDiv" id="stoBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">rcl</p><p class="alphaFunc">X</p>
                                         </div>
-                                        <button class="bttn black">sto&rarr;</button>
+                                        <button class="bttn black" onclick="stoBtn()">sto&rarr;</button>
                                 </div>
                                 <div class="btnDiv" id="oneBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">L1</p><p class="alphaFunc">Y</p>
                                         </div>
-                                        <button class="bttn white">1</button>
+                                        <button class="bttn white" onclick="oneBtn()">1</button>
                                 </div>
                                 <div class="btnDiv" id="twoBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">L2</p><p class="alphaFunc">Z</p>
                                         </div>
-                                        <button class="bttn white">2</button>
+                                        <button class="bttn white" onclick="twoBtn()">2</button>
                                 </div>
                                 <div class="btnDiv" id="threeBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">L3</p><p class="alphaFunc">&#952;</p>
                                         </div>
-                                        <button class="bttn white">3</button>
+                                        <button class="bttn white" onclick="threeBtn()">3</button>
                                 </div>
                                 <div class="btnDiv" id="addBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">mem</p><p class="alphaFunc">"</p>
                                         </div>
-                                        <button class="bttn white">+</button>
+                                        <button class="bttn white" onclick="addBtn()">+</button>
                                 </div>
                                 <div class="btnDiv" id="onBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">off</p>
                                         </div>
-                                        <button class="bttn black">on</button>
+                                        <button class="bttn black" onclick="onBtn()">on</button>
                                 </div>
                                 <div class="btnDiv" id="zeroBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">catalog</p><p class="alphaFunc">&#9141;</p>
                                         </div>
-                                        <button class="bttn white">0</button>
+                                        <button class="bttn white" onclick="zeroBtn()">0</button>
                                 </div>
                                 <div class="btnDiv" id="periodBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">i</p><p class="alphaFunc">:</p>
                                         </div>
-                                        <button class="bttn white">.</button>
+                                        <button class="bttn white" onclick="periodBtn()">.</button>
                                 </div>
                                 <div class="btnDiv" id="negBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">ans</p><p class="alphaFunc">?</p>
                                         </div>
-                                        <button class="bttn white">&#40;-&#41;</button>
+                                        <button class="bttn white" onclick="negBtn()">&#40;-&#41;</button>
                                 </div>
                                 <div class="btnDiv" id="enterBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">entry</p><p class="alphaFunc">solve</p>
                                         </div>
-                                        <button class="bttn white">enter</button>
+                                        <button class="bttn white" onclick="solve(document.getElementById('userInput').value)">enter</button>
                                 </div>
                         </div>
                 </div>
