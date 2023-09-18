@@ -25,11 +25,221 @@
                                 </div>
                         </div>
                         <div class="screenDiv" id="modeDiv">
-                                <p class="modeMenu">mode</p>
+                                <p class="menuTitle">mode</p>
                                 <button id="radianbtn" class="option radianOption" onclick="setRadian(true)">RADIAN</button><button id="degreeBtn" class=" option degreeOption" onclick="setRadian(false)">DEGREE</button>
                         </div>
                         <div class="screenDiv" id="offDiv">
                                 <div class="offScreen"></div>
+                        </div>
+                        <div class="screenDiv" id="statList">
+                                <p class="menuTitle">list</p>
+                                <div class="navMenuDiv">
+                                        <button class="menuOption" id="namesOption" onclick="listNamesBtn()">names</button>
+                                        <button class="menuOption" id="mathOption" onclick="listMathBtn()">math</button>
+                                </div>
+                                <div class="menuContentDiv" id="listNames">
+                                        <button class="contentOptions" value = "1" onclick="listNamesChoose(value)">1: L1</button>
+                                        <button class="contentOptions" value = "2" onclick="listNamesChoose(value)">2: L2</button>
+                                        <button class="contentOptions" value = "3" onclick="listNamesChoose(value)">3: L3</button>
+                                        <button class="contentOptions" value = "4" onclick="listNamesChoose(value)">4: L4</button>
+                                        <button class="contentOptions" value = "5" onclick="listNamesChoose(value)">5: L5</button>
+                                        <button class="contentOptions" value = "6" onclick="listNamesChoose(value)">6: L6</button>
+                                        
+                                </div>
+                                <div class="menuContentDiv" id="listMath">
+                                        <button class="contentOptions" value = "1" onclick="listMathChoose(value)">1: min&#40;</button>
+                                        <button class="contentOptions" value = "2" onclick="listMathChoose(value)">2: max&#40;</button>
+                                        <button class="contentOptions" value = "3" onclick="listMathChoose(value)">3: mean&#40;</button>
+                                        <button class="contentOptions" value = "4" onclick="listMathChoose(value)">4: median&#40;</button>
+                                        <button class="contentOptions" value = "5" onclick="listMathChoose(value)">5: sum&#40;</button>
+                                        <button class="contentOptions" value = "6" onclick="listMathChoose(value)">6: prod&#40;</button>
+                                        <button class="contentOptions" value = "7" onclick="listMathChoose(value)">7: stdDev&#40;</button>
+                                        <button class="contentOptions" value = "8" onclick="listMathChoose(value)">8: variance&#40;</button>
+                                </div>
+                        </div>
+                        <div class="screenDiv" id="testDiv">
+                                <p class="menuTitle">test</p>
+                                <div class="navMenuDiv">
+                                        <button class="menuOption" id="testOption" onclick="testTestBtn()">test</button>
+                                        <button class="menuOption" id="logicOption" onclick="testLogicBtn()">logic</button>
+                                </div>
+                                <div class="menuContentDiv" id="testTest">
+                                        <button class="contentOptions" value = "1" onclick="testTestChoose(value)">1: =</button>
+                                        <button class="contentOptions" value = "2" onclick="testTestChoose(value)">2: &ne;</button>
+                                        <button class="contentOptions" value = "3" onclick="testTestChoose(value)">3: &gt;</button>
+                                        <button class="contentOptions" value = "4" onclick="testTestChoose(value)">4: &ge;</button>
+                                        <button class="contentOptions" value = "5" onclick="testTestChoose(value)">5: &lt;</button>
+                                        <button class="contentOptions" value = "6" onclick="testTestChoose(value)">6: &#8804;</button>
+                                        
+                                </div>
+                                <div class="menuContentDiv" id="testLogic">
+                                        <button class="contentOptions" value = "1" onclick="testLogicChoose(value)">1: %</button>
+                                        <button class="contentOptions" value = "2" onclick="testLogicChoose(value)">2: and</button>
+                                        <button class="contentOptions" value = "3" onclick="testLogicChoose(value)">3: or</button>
+                                        <button class="contentOptions" value = "4" onclick="testLogicChoose(value)">4: xor</button>
+                                        <button class="contentOptions" value = "5" onclick="testLogicChoose(value)">5: not&#40;</button>
+                                </div>
+                        </div>
+                        <div class="screenDiv" id="mathDiv">
+                                <p class="menuTitle">math</p>
+                                <div class="navMenuDiv">
+                                        <button class="menuOption" id="mathMathOption" onclick="mathMathBtn()">math</button>
+                                        <button class="menuOption" id="mathNumOption" onclick="mathNumBtn()">num</button>
+                                        <button class="menuOption" id="mathPrbOption" onclick="mathPrbBtn()">prb</button>
+                                </div>
+                                <div class="menuContentDiv" id="mathMath">
+                                        <button class="contentOptions" value = "1" onclick="mathMathChoose(value)">1: &gt;Frac</button>
+                                        <button class="contentOptions" value = "2" onclick="mathMathChoose(value)">2: &gt;Dec</button>
+                                        <button class="contentOptions" value = "3" onclick="mathMathChoose(value)">3: x<sup>3</sup></button>
+                                        <button class="contentOptions" value = "4" onclick="mathMathChoose(value)">4: ∛</button>
+                                        <button class="contentOptions" value = "5" onclick="mathMathChoose(value)">5: <sup>n</sup>√</button>
+                                        <button class="contentOptions" value = "6" onclick="mathMathChoose(value)">6: nDeriv&#40;</button>
+                                        <button class="contentOptions" value = "7" onclick="mathMathChoose(value)">7: fnInt&#40;</button>
+                                        <button class="contentOptions" value = "8" onclick="mathMathChoose(value)">8: logBASE&#40;</button>
+                                </div>
+                                <div class="menuContentDiv" id="mathNum">
+                                        <button class="contentOptions" value = "1" onclick="mathNumChoose(value)">1: abs&#40;</button>
+                                        <button class="contentOptions" value = "2" onclick="mathNumChoose(value)">2: round&#40;</button>
+                                        <button class="contentOptions" value = "3" onclick="mathNumChoose(value)">3: int&#40;</button>
+                                        <button class="contentOptions" value = "4" onclick="mathNumChoose(value)">4: frac</button>
+                                </div>
+                                <div class="menuContentDiv" id="mathPrb">
+                                        <button class="contentOptions" value = "1" onclick="mathPrbChoose(value)">1: nPr</button>
+                                        <button class="contentOptions" value = "2" onclick="mathPrbChoose(value)">2: nCr</button>
+                                        <button class="contentOptions" value = "3" onclick="mathPrbChoose(value)">3: !</button>
+
+                                </div>
+                        </div>
+                        <div class="screenDiv" id="angleDiv">
+                                <p class="menuTitle">angle</p>
+                                <div class="menuContentDiv" id="angleContent">
+                                        <button class="contentOptions" value = "1" onclick="angleChoose(value)">1: °</button>
+                                        
+                                </div>
+                        </div>
+                        <div class="screenDiv" id="matrixDiv">
+                                <p class="menuTitle">matrix</p>
+                                <div class="navMenuDiv">
+                                        <button class="menuOption" id="matrixNamesOption" onclick="matrixNamesBtn()">names</button>
+                                        <button class="menuOption" id="matrixMathOption" onclick="matrixMathBtn()">math</button>
+                                        <button class="menuOption" id="matrixEditOption" onclick="matrixEditBtn()">edit</button>
+                                </div>
+                                <div class="menuContentDiv" id="matrixNames">
+                                        <button class="contentOptions" value = "1" onclick="matrixNamesChoose(value)">1: [A]</button>
+                                        <button class="contentOptions" value = "2" onclick="matrixNamesChoose(value)">2: [B]</button>
+                                        <button class="contentOptions" value = "3" onclick="matrixNamesChoose(value)">3: [C]</button>
+                                        <button class="contentOptions" value = "4" onclick="matrixNamesChoose(value)">4: [D]</button>
+                                        <button class="contentOptions" value = "5" onclick="matrixNamesChoose(value)">5: [E]</button>
+                                        <button class="contentOptions" value = "6" onclick="matrixNamesChoose(value)">6: [F]</button>
+                                        <button class="contentOptions" value = "7" onclick="matrixNamesChoose(value)">7: [G]</button>
+                                        <button class="contentOptions" value = "8" onclick="matrixNamesChoose(value)">8: [H]</button>
+                                        <button class="contentOptions" value = "9" onclick="matrixNamesChoose(value)">9: [I]</button>
+                                        <button class="contentOptions" value = "0" onclick="matrixNamesChoose(value)">0: [J]</button>
+                                </div>
+                                <div class="menuContentDiv" id="matrixMath"> 
+                                        <button class="contentOptions" value = "1" onclick="matrixMathChoose(value)">1: det&#40;</button>
+                                        <button class="contentOptions" value = "2" onclick="matrixMathChoose(value)">2: <sup>T</sup></button>
+                                        <button class="contentOptions" value = "3" onclick="matrixMathChoose(value)">3: dim&#40;</button>
+                                        <button class="contentOptions" value = "4" onclick="matrixMathChoose(value)">4: fill&#40;</button>
+                                        <button class="contentOptions" value = "5" onclick="matrixMathChoose(value)">5: identity&#40;</button>
+                                        <button class="contentOptions" value = "6" onclick="matrixMathChoose(value)">6: randM&#40;</button>
+                                        <button class="contentOptions" value = "7" onclick="matrixMathChoose(value)">7: rref&#40;</button>
+                                </div>
+                                <div class="menuContentDiv" id="matrixEdit">
+                                        <button class="contentOptions" value = "1" onclick="matrixEditChoose(value)">1: [A]</button>
+                                        <button class="contentOptions" value = "2" onclick="matrixEditChoose(value)">2: [B]</button>
+                                        <button class="contentOptions" value = "3" onclick="matrixEditChoose(value)">3: [C]</button>
+                                        <button class="contentOptions" value = "4" onclick="matrixEditChoose(value)">4: [D]</button>
+                                        <button class="contentOptions" value = "5" onclick="matrixEditChoose(value)">5: [E]</button>
+                                        <button class="contentOptions" value = "6" onclick="matrixEditChoose(value)">6: [F]</button>
+                                        <button class="contentOptions" value = "7" onclick="matrixEditChoose(value)">7: [G]</button>
+                                        <button class="contentOptions" value = "8" onclick="matrixEditChoose(value)">8: [H]</button>
+                                        <button class="contentOptions" value = "9" onclick="matrixEditChoose(value)">9: [I]</button>
+                                        <button class="contentOptions" value = "0" onclick="matrixEditChoose(value)">0: [J]</button>
+                                </div>
+                        </div>
+                        <div class="screenDiv" id="statDiv">
+                                <p class="menuTitle">stat</p>
+                                <div class="navMenuDiv">
+                                        <button class="menuOption" id="editOption" onclick="statEditBtn()">edit</button>
+                                        <button class="menuOption" id="calcOption" onclick="statCalcBtn()">calc</button>
+                                </div>
+                                <div class="menuContentDiv" id="statEdit">
+                                        <button class="contentOptions" value = "1" onclick="statEditChoose(value)">1: edit...</button>
+                                        <button class="contentOptions" value = "2" onclick="statEditChoose(value)">2: sortA&#40;</button>
+                                        <button class="contentOptions" value = "3" onclick="statEditChoose(value)">3: sortD&#40;</button>
+                                        <button class="contentOptions" value = "4" onclick="statEditChoose(value)">4: clrList&#40;</button>
+                                </div>
+                                <div class="innerMenuDiv" id="statEditEditDiv">
+                                        <div class="row" id="listRow">
+                                                <div class="col-sm">
+                                                        <table class="listTable instance1">
+                                                                <tr>
+                                                                        <th class="listTableHeader">L<sub>1</sub></th>
+                                                                </tr>
+                                                                <tr>
+                                                                        <th class="listTableEntry list1 instance1" onclick="selectCell(this.className)">----</th>
+                                                                </tr>
+                                                        </table>
+                                                </div>
+                                                <div class="col-sm">
+                                                        <table class="listTable instance2">
+                                                                <tr>
+                                                                        <th class="listTableHeader">L<sub>2</sub></th>
+                                                                </tr>
+                                                                <tr>
+                                                                        <th class="listTableEntry list2 instance1" onclick="selectCell(this.className)">----</th>
+                                                                </tr>
+                                                        </table>
+                                                </div>
+                                                <div class="col-sm">
+                                                        <table class="listTable instance3">
+                                                                <tr>
+                                                                        <th class="listTableHeader">L<sub>3</sub></th>
+                                                                </tr>
+                                                                <tr>
+                                                                        <th class="listTableEntry list3 instance1" onclick="selectCell(this.className)">----</th>
+                                                                </tr>
+                                                        </table>
+                                                </div>
+                                                <div class="col-sm">
+                                                        <table class="listTable instance4">
+                                                                <tr>
+                                                                        <th class="listTableHeader">L<sub>4</sub></th>
+                                                                </tr>
+                                                                <tr>
+                                                                        <th class="listTableEntry list4 instance1" onclick="selectCell(this.className)">----</th>
+                                                                </tr>
+                                                        </table>
+                                                </div>
+                                                <div class="col-sm">
+                                                        <table class="listTable instance5">
+                                                                <tr>
+                                                                        <th class="listTableHeader">L<sub>5</sub></th>
+                                                                </tr>
+                                                                <tr>
+                                                                        <th class="listTableEntry list5 instance1" onclick="selectCell(this.className)">----</th>
+                                                                </tr>
+                                                        </table>
+                                                </div>
+                                                <div class="col-sm">
+                                                        <table class="listTable instance6">
+                                                                <tr>
+                                                                        <th class="listTableHeader">L<sub>6</sub></th>
+                                                                </tr>
+                                                                <tr>
+                                                                        <th class="listTableEntry list6 instance1" onclick="selectCell(this.className)">----</th>
+                                                                </tr>
+                                                        </table>
+                                                </div>
+                                        </div>
+                                        <div class="currValDiv">
+                                                <p class="currVal" id="currValP">L<sub>1</sub>&#40;1&#41; = <input id="currValInput" type="text" autofocus></p>
+                                        </div>
+                                </div>
+                                <div class="menuContentDiv" id="statCalc">
+                                        hello
+                                </div>
                         </div>
                         <div class="buttonDiv">
                                 <div class="btnDiv" id="y=BtnDiv">
@@ -77,30 +287,28 @@
                                 </div>
                                 <div class="btnDiv" id="delBtnDiv">
                                         <div class = "aboveBtn">
-                                                <p class="secFunc">ins</p>
                                         </div>
-                                        <button class="bttn black" onclick="deletes()">del</button>
+                                        <button class="bttn black" onclick="delBtn()">del</button>
                                 </div>
                                 <div class ='circleBase' id='rotateMode'>
 
-                                        <button id="left" class="arrowBtns"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
+                                        <button id="left" class="arrowBtns" onclick="leftBtn()"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
                                         
-                                         <button id="right" class="arrowBtns"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
+                                         <button id="right" class="arrowBtns" onclick="rightBtn()"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
                                          
-                                         <button id="up" class="arrowBtns" onclick="scrollPrev(true)"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
+                                         <button id="up" class="arrowBtns" onclick="upBtn()"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
                                          
-                                        <button id="down" class="arrowBtns" onclick="scrollPrev(false)"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
+                                        <button id="down" class="arrowBtns" onclick="downBtn()"><i class="fa-solid fa-caret-up" style="color: #000000;"></i></button>
                                         
                                 </div>
                                 <div class="btnDiv" id="alphaBtnDiv">
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">A-lock</p>
                                         </div>
-                                        <button id="alphaBtn" class="bttn green" onclick="toggleAlpha()">alpha</button>
+                                        <button id="alphaBtn" class="bttn green" onclick="alphaBtn()">alpha</button>
                                 </div>
                                 <div class="btnDiv" id="xtBtnDiv">
                                         <div class = "aboveBtn">
-                                                <p class="secFunc">link</p>
                                         </div>
                                         <button class="bttn black">X,T,&#952;,n</button>
                                 </div>
@@ -108,7 +316,7 @@
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">list</p>
                                         </div>
-                                        <button class="bttn black">stat</button>
+                                        <button class="bttn black" onclick="statBtn()">stat</button>
                                 </div>
                                 <div class="btnDiv" id="mathBtnDiv">
                                         <div class = "aboveBtn">
@@ -124,7 +332,7 @@
                                 </div>
                                 <div class="btnDiv" id="prgmBtnDiv">
                                         <div class = "aboveBtn">
-                                                <p class="secFunc">draw</p><p class="alphaFunc">C</p>
+                                                <p class="alphaFunc">C</p>
                                         </div>
                                         <button class="bttn black" onclick="prgmBtn()">prgm</button>
                                 </div>
@@ -138,7 +346,7 @@
                                         <div class = "aboveBtn">
                                                 <p class="secFunc"></p><p class="alphaFunc"></p>
                                         </div>
-                                        <button class="bttn black" onclick="clears()">clear</button>
+                                        <button class="bttn black" onclick="clearBtn()">clear</button>
                                 </div>
                                 <div class="btnDiv" id="inverseBtnDiv">
                                         <div class = "aboveBtn">
@@ -178,7 +386,7 @@
                                 </div>
                                 <div class="btnDiv" id="commaBtnDiv">
                                         <div class = "aboveBtn">
-                                                <p class="secFunc">EE</p><p class="alphaFunc">J</p>
+                                                <p class="alphaFunc">J</p>
                                         </div>
                                         <button class="bttn black" onclick="commaBtn()">,</button>
                                 </div>
@@ -262,7 +470,7 @@
                                 </div>
                                 <div class="btnDiv" id="stoBtnDiv">
                                         <div class = "aboveBtn">
-                                                <p class="secFunc">rcl</p><p class="alphaFunc">X</p>
+                                                <p class="alphaFunc">X</p>
                                         </div>
                                         <button class="bttn black" onclick="stoBtn()">sto&rarr;</button>
                                 </div>
@@ -298,7 +506,7 @@
                                 </div>
                                 <div class="btnDiv" id="zeroBtnDiv">
                                         <div class = "aboveBtn">
-                                                <p class="secFunc">catalog</p><p class="alphaFunc">&#9141;</p>
+                                                <p class="alphaFunc">&#9141;</p>
                                         </div>
                                         <button class="bttn white" onclick="zeroBtn()">0</button>
                                 </div>
@@ -316,9 +524,9 @@
                                 </div>
                                 <div class="btnDiv" id="enterBtnDiv">
                                         <div class = "aboveBtn">
-                                                <p class="secFunc">entry</p><p class="alphaFunc">solve</p>
+                                                <p class="alphaFunc">solve</p>
                                         </div>
-                                        <button class="bttn white" onclick="solve(document.getElementById('userInput').value)">enter</button>
+                                        <button class="bttn white" onclick="enterBtn()">enter</button>
                                 </div>
                         </div>
                 </div>

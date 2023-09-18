@@ -4,6 +4,7 @@
 #414141 black
 #9e9e9e gray
 #DFAFB1 pink
+#7e191b red
 */
 body{
         overflow: hidden;
@@ -16,17 +17,20 @@ body{
 
 .outerCalcDiv{
         background-color: black;
+        display: grid;
         border-radius: 15.2px;
         width: 525px;
         height: 100vh;
         margin-left: auto;
         margin-right: auto;
+        position: relative;
+        top: 0;
 }
 
 .screenDiv{
         background-color: white;
         width: 95%;
-        height: 20%;
+        height: 200px;
         border-radius: 15.2px;
         margin-left: auto;
         margin-right: auto;
@@ -91,28 +95,6 @@ body{
         margin-top: 6vh;
         margin-left: 3vw;
         position: relative;
-}
-
-.currCalc i{
-        position: absolute;
-        width: 1px;
-        height: 80%;
-        background-color: gray;
-        left: 5px;
-        top: 10%;
-        animation-name: blink;
-        animation-duration: 800ms;
-        animation-iteration-count: infinite;
-        opacity: 1;
-}
-
-.currCalc input:focus + i{
-        display: none;
-}
-
-@keyframes blink{
-        from{opacity: 1;}
-        to {opacity: 0;}
 }
 
 .screenDivider{
@@ -290,6 +272,7 @@ body{
 
 
 #normDiv{
+        display: none;
 }
 
 .option{
@@ -301,14 +284,6 @@ body{
         color: black;
 }
 
-.option:focus{
-        border-style: solid;
-        border-color: #DFAFB1;
-        border-radius: 15.2px;
-        background-color: #DFAFB1;
-        color: white;
-}
-
 #modeDiv{
         padding-left: 20px;
         overflow-x: hidden;
@@ -316,7 +291,7 @@ body{
         display: none;
 }
 
-.modeMenu{
+.menuTitle{
         text-align: center;
         color: black;
         font-family: 'Montserrat', sans-serif;
@@ -336,9 +311,166 @@ body{
 }
 
 
+.option.radianOption{
+        border-style: solid;
+        border-color: #DFAFB1;
+        border-radius: 15.2px;
+        background-color: #DFAFB1;
+        color: white;
+}
+
+.navMenuDiv{
+        display: flex;
+}
+
+.menuOption{
+        flex: 50%;
+        height: 30px;
+        border-style: solid;
+        border-color: transparent;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 14px;
+        background-color: transparent;
+        margin-left: 10px;
+        margin-right: 10px;
+}
+
+#editOption{
+        background-color: #DFAFB1;
+        color: white;
+}
+
+#namesOption{
+        background-color: #DFAFB1;
+        color: white;
+}
+
+#listMath, #statList{
+        display: none;
+}
+
+#listNames{
+        padding-bottom: 0;
+}
+
+.menuContentDiv{
+        width: 95%;
+        height: 49%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 5px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+}
+
+.innerMenuDiv{
+        width: 95%;
+        height: 49%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 5px;
+}
+
+.contentOptions{
+        display: block;
+        border-style: solid;
+        border-color: transparent;
+        background-color: transparent;
+        color: black;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 14px;
+}
+
+.contentOptions:hover{
+        color:#DFAFB1;
+}
+
+.contentOptions:focus{
+        color:#DFAFB1;
+}
+
+#statEditEditDiv{
+        display: none;
+}
+
+#listRow{
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        column-gap: 0;
+}
+.listTable{
+        width: 95%;
+        margin-left: auto;
+        margin-right: auto;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 14px;
+}
+
+.listTableHeader{
+        text-align: center;
+        border-style: solid;
+        border-color: black;
+        border-width: 1px;
+}
+
+.listTableEntry{
+        text-align: center;
+        border-style: solid;
+        border-color: black;
+        border-width: 1px;
+}
+
+#statCalc{
+        display: none;
+}
+.currValDiv{
+        position: relative;
+        top: 15px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 14px;
+}
+
+#currValInput{
+        outline: none;
+        border: none;
+}
+
+.listTableEntry.instance1.initialSelect{
+        background-color: #DFAFB1;
+}
+
+#listRow{
+
+        overflow-x: hidden;
+        overflow-y: scroll;
+        width: 100%;
+        height: 60px;
+
+}
+
+#listMath{
+        display: none;
+}
+
+#testDiv, #testLogic{
+        display: none;
+}
 
 
+#matrixDiv, #matrixMath, #matrixEdit{
+        display: none;
+}
 
+th{
+        pointer-events: all;
+}
 
+#angleDiv{
+        display: none;
+}
 
+#mathDiv, #mathNum, #mathPrb{
+        display: none;
+}
 
