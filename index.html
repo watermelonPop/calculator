@@ -10,7 +10,18 @@
         <script src="https://kit.fontawesome.com/b7b6d87d91.js" crossorigin="anonymous"></script>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-        <script src="https://unpkg.com/mathjs/lib/browser/math.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.js"></script>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.css" integrity="sha384-D+9gmBxUQogRLqvARvNLmA9hS2x//eK1FhVb9PiU86gmcrBrJAQT8okdJ4LMp2uv" crossorigin="anonymous">
+
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/katex.min.js" integrity="sha384-483A6DwYfKeDa0Q52fJmxFXkcPCFfnXMoXblOkJ4JcA8zATN6Tm78UNL72AKk+0O" crossorigin="anonymous"></script>
+
+    <!-- To automatically render math in text elements, include the auto-render extension: -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0-rc.1/dist/contrib/auto-render.min.js" integrity="sha384-yACMu8JWxKzSp/C1YV86pzGiQ/l1YUfE8oPuahJQxzehAjEt2GiQuy/BIvl9KyeF" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+
 </head>
 <body>
         <div class="backingDiv">
@@ -20,8 +31,10 @@
                                 </div>
                                 <hr class="screenDivider">
                                 <div class="currCalc">
+                                        <p id="formattedEq"></p>
                                         <input type="text" id="userInput" autofocus>
                                         <i></i>
+                                        
                                 </div>
                         </div>
                         <div class="screenDiv" id="modeDiv">
@@ -158,11 +171,25 @@
                                         <button class="contentOptions" value = "0" onclick="matrixEditChoose(value)">0: [J]</button>
                                 </div>
                         </div>
+                        <div class="screenDiv" id="matrixEditorDiv">
+                                <div class="menuTitle">
+                                        <span id="matrixName">Matrix[A]</span><span id="matrixRowsInput">1</span><span> x </span><span id="matrixColsInput">1</span>
+                                </div>
+                                <div class="matrixDisplay">
+                                        <!--<table class="matrixTable">
+                                                <tr class="matrixRows">
+                                                        <th class="matrixCells row1 instance1">0</th>
+                                                </tr>
+                                        </table>-->
+                                </div>
+                                <div class="enterVals">
+                                        <span id="beforeMatrixInput">num rows: </span><input type="text" id="matrixEditInput" value="1" autofocus>
+                                </div>
+                        </div>
                         <div class="screenDiv" id="statDiv">
                                 <p class="menuTitle">stat</p>
                                 <div class="navMenuDiv">
                                         <button class="menuOption" id="editOption" onclick="statEditBtn()">edit</button>
-                                        <button class="menuOption" id="calcOption" onclick="statCalcBtn()">calc</button>
                                 </div>
                                 <div class="menuContentDiv" id="statEdit">
                                         <button class="contentOptions" value = "1" onclick="statEditChoose(value)">1: edit...</button>
@@ -236,9 +263,6 @@
                                         <div class="currValDiv">
                                                 <p class="currVal" id="currValP">L<sub>1</sub>&#40;1&#41; = <input id="currValInput" type="text" autofocus></p>
                                         </div>
-                                </div>
-                                <div class="menuContentDiv" id="statCalc">
-                                        hello
                                 </div>
                         </div>
                         <div class="buttonDiv">

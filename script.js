@@ -33,16 +33,22 @@ let selectedMathMathOption = -1;
 let selectedMathNumOption = -1;
 let selectedMathPrbOption = -1;
 
-let matrixA = [];
-let matrixB = [];
-let matrixC = [];
-let matrixD = [];
-let matrixE = [];
-let matrixF = [];
-let matrixG = [];
-let matrixH = [];
-let matrixI = [];
-let matrixJ = [];
+let inputFocusInd = 1;
+let matrixSelectInd = [-1, -1];
+let matrixA = [[0]];
+let matrixB = [[0]];
+let matrixC = [[0]];
+let matrixD = [[0]];
+let matrixE = [[0]];
+let matrixF = [[0]];
+let matrixG = [[0]];
+let matrixH = [[0]];
+let matrixI = [[0]];
+let matrixJ = [[0]];
+
+let currInputOrig = "";
+let currFormatted = "";
+let tester = 0;
 
 var input = document.getElementById("userInput");
 input.select();
@@ -50,12 +56,8 @@ input.select();
 scrollToBottom();
 
 
-//parse sin, cos, tan, asin, acos, atan, sqrt,log, ln,  10^, e^
 
-function scrollToBottom(){
-        var scrollObj = document.getElementsByClassName("prevCalcDiv")[0]
-        scrollObj.scrollTop = scrollObj.scrollHeight-80;        
-}
+//parse sin, cos, tan, asin, acos, atan, sqrt,log, ln,  10^, e^
 function addPrevCalc(calc, result){
         numPrev++;
         document.getElementsByClassName("prevCalcDiv")[0].innerHTML += "<div class='calcResDiv instance" + numPrev + "'><p class='calc'>" + calc + "</p> <p class='prevResult'>" + result + "</p></div>";
@@ -66,6 +68,7 @@ function addPrevCalc(calc, result){
 
 function displayInput(val, id){
         document.getElementById(id).value += val;
+        //currInputOrig += val;
 }
 
 document.getElementsByClassName("radianOption")[0].focus();
@@ -85,6 +88,73 @@ function setRadian(boolVal){
                 document.getElementById("degreeBtn").style.borderRadius = "15.2px";
                 document.getElementById("degreeBtn").style.backgroundColor = "#DFAFB1";
                 document.getElementById("degreeBtn").style.color = "white";
+        }
+}
+
+function scrollToBottom(){
+        var scrollObj = document.getElementsByClassName("prevCalcDiv")[0]
+        scrollObj.scrollTop = scrollObj.scrollHeight-40;        
+}
+
+function isVisible(e) {
+        return !!( e.offsetWidth || e.offsetHeight || e.getClientRects().length );
+}
+
+document.getElementById("userInput").addEventListener('keydown', function(event) {
+        const key = event.key;
+        if (key === "Backspace" || key === "Delete") {
+                if(currInputOrig.trim() == ""){
+                        currFormatted = "";
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                }else{
+                        currInputOrig = currInputOrig.slice(0, currInputOrig.length-1);
+                        currFormatted = currFormatted.slice(0, currFormatted.length-1);
+                }
+        }
+});
+
+function showScreen(showId){
+        document.getElementById(showId).style.display = "block";
+
+        if(showId != "normDiv"){
+                document.getElementById("normDiv").style.display = "none";
+        }
+        if(showId != "modeDiv"){
+                document.getElementById("modeDiv").style.display = "none";
+        }
+        if(showId != "offDiv"){
+                document.getElementById("offDiv").style.display = "none";
+        }
+        if(showId != "statDiv"){
+                document.getElementById("statDiv").style.display = "none";
+        }
+        if(showId != "statList"){
+                document.getElementById("statList").style.display = "none";
+        }if(showId != "testDiv"){
+                document.getElementById("testDiv").style.display = "none";
+        }if(showId != "matrixDiv"){
+                document.getElementById("matrixDiv").style.display = "none";
+        }
+        if(showId != "angleDiv"){
+                document.getElementById("angleDiv").style.display = "none";
+        }if(showId != "mathDiv"){
+                document.getElementById("mathDiv").style.display = "none";
+        }
+        if(showId != "matrixEditorDiv"){
+                let matrixLetter = document.getElementById("matrixName").innerHTML.substring(document.getElementById("matrixName").innerHTML.indexOf("[") + 1, document.getElementById("matrixName").innerHTML.indexOf("]"));
+                let matrices = ["A", "B", "C", "D", "E", "F", "G", "H","I", "J"];
+                let matricesVals = [matrixA, matrixB,matrixC,matrixD,matrixE,matrixF,matrixG,matrixH,matrixI,matrixJ];
+                let matrixArr = matricesVals[matrices.indexOf(matrixLetter)];
+
+                document.getElementById("matrixEditorDiv").style.display = "none";
+                inputFocusInd = 1;
+                document.getElementById("matrixRowsInput").style.backgroundColor = "#DFAFB1";
+                document.getElementById("matrixColsInput").style.backgroundColor = "transparent";
+                
+                document.getElementById("matrixEditInput").value = "";
+                displayInput(matrixArr.length, "matrixEditInput");
+                matrixSelectInd = [-1, -1];
+                highlightMatrixCell();
         }
 }
 
@@ -143,189 +213,95 @@ function allOccurencesLog(source, find){
         return result;
 }
 
-
-//≠, ≥, ≤
-//sin, cos, tan, asin, acos, atan, sqrt, 10^, e^, for list math
-function parseEq(eq){
-        //replace all x with *
-        //replace all / with /
-        let ret = eq.replace(/×/g, '*');
-        ret = ret.replace(/÷/g, '/');
-        ret = ret.replace(/𝝿/g, 'PI');
-        ret = ret.replace(/√/g, 'sqrt');
-        ret = ret.replaceAll("L1", "[" + list1 + "]");
-        ret = ret.replaceAll("L2", "[" + list2 + "]");
-        ret = ret.replaceAll("L3", "[" + list3 + "]");
-        ret = ret.replaceAll("L4", "[" + list4 + "]");
-        ret = ret.replaceAll("L5", "[" + list5 + "]");
-        ret = ret.replaceAll("L6", "[" + list6 + "]");
-        ret = ret.replaceAll("stdDev", "std");
-        ret = ret.replace(/=/g, '==');
-        ret = ret.replace(/≠/g, '!=');
-        ret = ret.replace(/≥/g, '>=');
-        ret = ret.replace(/≤/g, '<=');
-        ret = ret.replace(/°/g, ' deg');
-
-        if(isRadian == false){
-                if(ret.includes("sin") || ret.includes("cos") || ret.includes("tan")){
-                        let sinOccur = allOccurencesTrig(ret, "sin");
-                        for(let i = 0; i < sinOccur.length; i++){
-                                ret = ret.substring(0, sinOccur[i]) + " deg" + ret.substring(sinOccur[i], ret.length);
-                        }
-                        let cosOccur = allOccurencesTrig(ret, "cos");
-                        for(let i = 0; i < cosOccur.length; i++){
-                                ret = ret.substring(0, cosOccur[i]) + " deg" + ret.substring(cosOccur[i], ret.length);
-                        }
-                        let tanOccur = allOccurencesTrig(ret, "tan");
-                        for(let i = 0; i < tanOccur.length; i++){
-                                ret = ret.substring(0, tanOccur[i]) + " deg" + ret.substring(tanOccur[i], ret.length);
-                        }
-                }
-        }
-        if(ret.includes("log(")){
-                let logOccur = allOccurencesLog(ret, "log(");
-                for(let i = 0; i < logOccur.length; i++){
-                        ret = ret.substring(0, logOccur[i]) + ", 10" + ret.substring(logOccur[i], ret.length);
-                }
-        }
-        if(ret.includes("ln(")){
-                let lnOccur = allOccurencesLog(ret, "ln(");
-                for(let i = 0; i < lnOccur.length; i++){
-                        ret = ret.substring(0, lnOccur[i]) + ", e" + ret.substring(lnOccur[i], ret.length);
-                }
-        }
-        for(let i = 0; i < allVars.length; i++){
-                if(ret.includes(allVars[i])){
-                        ret = ret.replaceAll(allVars[i], varStorage[i]);
-                }
-        }
-        return ret;
+function refocusInput(id){
+        document.getElementById(id).focus();
 }
 
-function replaceAllSortA(eq){
-        while(eq.includes("sortA")){
-                eq = replaceOneSortA(eq);
+//katex.render("c = \\pm\\sqrt{a^2 + b^2}", document.getElementById("tester"), {throwOnError: false});
+
+function subtractStr(str1, str2){ // str1 - str2
+        if(str1.substring(0, str2.length) != str2){
+                return false;
         }
-        return eq;
+        return str1.substring(str2.length, str1.length);
 }
 
-function replaceOneSortA(eq){
-        let origList = JSON.parse(eq.substring(eq.indexOf("(") + 1, eq.indexOf(")")));
-        let sortedList;
-        sortedList = sortA(origList);
-        eq = eq.substring(0, eq.indexOf("sortA")) + "[" + sortedList.toString() + "]" + eq.substring(eq.indexOf(")") + 1, eq.length);
-        return eq;
-}
-
-function replaceAllSortD(eq){
-        while(eq.includes("sortD")){
-                eq = replaceOneSortD(eq);
-        }
-        return eq;
-}
-
-function replaceOneSortD(eq){
-        let origList = JSON.parse(eq.substring(eq.indexOf("(") + 1, eq.indexOf(")")));
-        let sortedList;
-        sortedList = sortD(origList);
-        eq = eq.substring(0, eq.indexOf("sortD")) + "[" + sortedList.toString() + "]" + eq.substring(eq.indexOf(")") + 1, eq.length);
-        return eq;
-}
-
-function clearList(listNum){
-        //redo inner html, make sure to reset current selected cell and highlight
-        let currTable = document.getElementsByClassName("listTable instance" + listNum)[0];
-        currTable.innerHTML="<tr><th class='listTableHeader'>L<sub>1</sub></th></tr><tr><th class='listTableEntry list" + listNum + " instance1 initialSelect'>----</th></tr>";
-        selectedListCell = [1, 1];
-        highlightSelectedCell();
-}
-
+decToFrac = dec =>
+  [...Array(1000).keys()].flatMap(
+    i => [...Array(1000).keys()].map(
+      j => [
+        i + 1, j + 1, (i + 1) / (j + 1),
+        Math.abs(((i + 1) / (j + 1)) - dec)
+      ]
+    )
+  ).sort((a, b) => a[3] - b[3])[0].slice(0, 2)
 
 function solve(eq){
-        let ogEq = eq;
-        if(eq.includes("clrList")){
-                if(eq.trim().length != 11){
-                        addPrevCalc(ogEq, "error");
-                        clears("userInput");
-                        return;
-                }else{
-                        let numList = eq.substring(eq.indexOf("clrList") + 9, eq.indexOf(")"));
-                        //alert(numList);
-                        //clear list
-                        //return {}
-                        eval("list" + numList + " = [];");
-                        clearList(numList);
-                        addPrevCalc(ogEq, "{}");
-                        clears("userInput");
-                        return;
-                }
-        }
-        eq = parseEq(eq);
+        let ans = "error";
         if(eq.includes("→")){
-                let variable = eq.trim().substring(0, 1);
-                if(allVars.includes(variable)){
-                        if(eq.trim().substring(eq.trim().indexOf("→") + 1, eq.trim().length).trim() == ""){
-                                addPrevCalc(ogEq, "error");
-                                clears("userInput");
-                        }else{
-                                varStorage[allVars.indexOf(variable)] = eq.trim().substring(eq.trim().indexOf("→") + 1, eq.trim().length);
-                                addPrevCalc(ogEq, eq.trim().substring(eq.trim().indexOf("→") + 1, eq.trim().length));
-                                clears("userInput");
-                        }
-                }else{
-                        addPrevCalc(ogEq, "error");
-                        clears("userInput");
+                if(allVars.includes(eq.substr(0, eq.indexOf("→")).trim())){
+                        let varDest = eq.substr(0, eq.indexOf("→")).trim();
+                        varStorage[varStorage.indexOf(varDest)] = eq.substr(eq.indexOf("→") + 1, eq.length).trim();
+                        ans = eq.substr(eq.indexOf("→") + 1, eq.length).trim();
                 }
-        }else if(eq.includes("sortA") || eq.includes("sortD")){
-                let ans = "error";
-                eq = replaceAllSortA(eq);
-                eq = replaceAllSortD(eq);
+                return ans;
+        }
+        if(eq.includes("clrList(")){
+                if(!parenIsClosed(eq, eq.indexOf("clrList(") + 7)){
+                        return "error";
+                }
+                let beginInd = eq.indexOf("clrList(") + 7;
+                let endInd = findClosedParen(eq, beginInd);
+                let innerContent = eq.substring(beginInd + 1, endInd);
+                if(innerContent.trim().length != 2 || innerContent.trim()[0] != "L"){
+                        return "error";
+                }
+                let listNum = parseInt(innerContent[1]);
+                clearList(listNum)
+                return "[]";
+        }
+        eq = replaceAllSortA(eq);
+        eq = replaceAllSortD(eq);
+        eq = parseEq(eq);
+
+        if(eq.includes(">Frac")){
+                ans = "error";
                 try{
-                        ans = math.evaluate(eq);
-                        if(parseFloat(ans) < math.pow(10, -15) && parseFloat(ans) > -1*math.pow(10, -15)){
-                                ans = "0";
-                        }
+                        ans = math.evaluate(eq.substr(0, eq.indexOf(">Frac")));
                 }catch(error){
                 }
-                addPrevCalc(ogEq, ans);
-                clears("userInput");
-        }   
-        else{
-                let ans = "error";
+                if(ans != "error"){
+                        fracVer = decToFrac(parseFloat(ans));
+                        fracStr = fracVer[0] + "/" + fracVer[1];
+                        return fracStr;
+                }
+                return ans;
+        }
+
+        if(eq.includes(">Dec")){
+                ans = "error";
                 try{
-                        ans = math.evaluate(eq);
-                        if(parseFloat(ans) < math.pow(10, -15) && parseFloat(ans) > -1*math.pow(10, -15)){
-                                ans = "0";
-                        }
+                        ans = math.evaluate(eq.substr(0, eq.indexOf(">Dec")));
                 }catch(error){
                 }
-                addPrevCalc(ogEq, ans);
-                clears("userInput");
+                return ans;
         }
-        refocusInput("userInput");
-        refocusInput("currValInput");
-}
 
-function isVisible(e) {
-        return !!( e.offsetWidth || e.offsetHeight || e.getClientRects().length );
-}
-
-function callFunc(funcName, funcParam){
-        let fn = window[funcName];
-        if(typeof fn == "function"){
-                fn.apply(null, funcParam);
+        try{
+                ans = math.evaluate(eq);
+                if(parseFloat(ans) < math.pow(10, -15) && parseFloat(ans) > -1*math.pow(10, -15)){
+                        ans = "0";
+                }
+        }catch(error){
         }
+        return ans;
 }
 
-function sortA(lst){
-        lst.sort();
-        return lst;
-}
-
-function sortD(lst){
-        lst.sort();
-        lst.reverse();
-        return lst;
+function clears(id){
+        document.getElementById(id).value = "";
+        document.getElementById(id).innerHTML = "";
+        //currInputOrig = "";
+        refocusInput(id);
 }
 
 function enterBtn(){
@@ -338,7 +314,6 @@ function enterBtn(){
                 //solve function
                 return;
         }
-
         if(isVisible(document.getElementById("normDiv"))){
                 if(selectedDivChild[0] != -1){
                         let divChilds = document.getElementsByClassName("calcResDiv instance" + selectedDivChild[0])[0].children;
@@ -347,8 +322,15 @@ function enterBtn(){
                         selectedDivChild = [-1, -1];
                         refocusInput("userInput");
                 }else{
-                        solve(document.getElementById('userInput').value);
-                }
+                        //alert(currInputOrig);
+                        let ans = solve(currInputOrig);
+                        addPrevCalc(currFormatted, ans);
+                        katex.render(currFormatted, document.getElementsByClassName("calcResDiv instance" + numPrev)[0].children[0], {throwOnError: false});
+                        currInputOrig = "";
+                        currFormatted = "";
+                        clears("userInput");
+                        clears("formattedEq");
+                }    
         }else if(isVisible(document.getElementById("statDiv"))){
                 if(isVisible(document.getElementById("statEdit"))){
                         if(selectedStatEditOption != -1){
@@ -356,7 +338,6 @@ function enterBtn(){
                         }
                 }
                 else if(isVisible(document.getElementById("statEditEditDiv"))){
-                        //get input
                         let currNum = document.getElementById("currValInput").value;
                         currNum = parseEq(currNum);
                         let ans = "error";
@@ -425,51 +406,585 @@ function enterBtn(){
                                 }
                         }
                 }
-        }else if(isVisible(document.getElementById("statList"))){
-                if(isVisible(document.getElementById("listNames"))){
-                        if(selectedlistNamesOption != -1){
-                                listNamesChoose(selectedlistNamesOption);
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                let matrices = ["A", "B", "C", "D", "E", "F", "G", "H","I", "J"];
+                let matricesVals = [matrixA, matrixB,matrixC,matrixD,matrixE,matrixF,matrixG,matrixH,matrixI,matrixJ];
+
+                //let inputFocusInd = 1;let matrixSelectInd = [-1, -1];
+                let newMatrix = [];
+                if(inputFocusInd == 1){
+                        document.getElementById("matrixRowsInput").innerHTML = document.getElementById("matrixEditInput").value;
+                        let matrixLetter = document.getElementById("matrixName").innerHTML.substring(document.getElementById("matrixName").innerHTML.indexOf("[") + 1, document.getElementById("matrixName").innerHTML.indexOf("]"));
+                        let arrN = matrices.indexOf(matrixLetter);
+                        let targetMatrix = matricesVals[arrN];
+                        newMatrix = updateMatrixRows(matrixLetter, targetMatrix, document.getElementById("matrixEditInput").value, targetMatrix[0].length);
+                        document.getElementsByClassName("matrixDisplay")[0].innerHTML = matrixToTable(newMatrix);
+                        refocusInput("matrixEditInput");
+                }else if(inputFocusInd == 2){
+                        document.getElementById("matrixColsInput").innerHTML = document.getElementById("matrixEditInput").value;
+                        let matrixLetter = document.getElementById("matrixName").innerHTML.substring(document.getElementById("matrixName").innerHTML.indexOf("[") + 1, document.getElementById("matrixName").innerHTML.indexOf("]"));
+                        let arrN = matrices.indexOf(matrixLetter);
+                        let targetMatrix = matricesVals[arrN];
+                        newMatrix = updateMatrixCols(matrixLetter, targetMatrix, document.getElementById("matrixEditInput").value, targetMatrix[0].length);
+                        document.getElementsByClassName("matrixDisplay")[0].innerHTML = matrixToTable(newMatrix);
+                        refocusInput("matrixEditInput");
+                }else if(inputFocusInd == -1){
+                        let letter = document.getElementById("matrixName").innerHTML.substring(document.getElementById("matrixName").innerHTML.indexOf("[") + 1, document.getElementById("matrixName").innerHTML.indexOf("]"));
+                        if(letter == "A"){
+                                matrixA[matrixSelectInd[0]-1][matrixSelectInd[1]-1] = document.getElementById("matrixEditInput").value;
+                                newMatrix = matrixA;
+                        }else if(letter == "B"){
+                                matrixB[matrixSelectInd[0]-1][matrixSelectInd[1]-1] = document.getElementById("matrixEditInput").value;
+                                newMatrix = matrixB;
+                        }else if(letter == "C"){
+                                matrixA[matrixSelectInd[0]-1][matrixSelectInd[1]-1] = document.getElementById("matrixEditInput").value;
+                                newMatrix = matrixC;
+                        }else if(letter == "D"){
+                                matrixA[matrixSelectInd[0]-1][matrixSelectInd[1]-1] = document.getElementById("matrixEditInput").value;
+                                newMatrix = matrixD;
+                        }else if(letter == "E"){
+                                matrixA[matrixSelectInd[0]-1][matrixSelectInd[1]-1] = document.getElementById("matrixEditInput").value;
+                                newMatrix = matrixE;
+                        }else if(letter == "F"){
+                                matrixA[matrixSelectInd[0]-1][matrixSelectInd[1]-1] = document.getElementById("matrixEditInput").value;
+                                newMatrix = matrixF;
+                        }else if(letter == "G"){
+                                matrixA[matrixSelectInd[0]-1][matrixSelectInd[1]-1] = document.getElementById("matrixEditInput").value;
+                                newMatrix = matrixG;
+                        }else if(letter == "H"){
+                                matrixA[matrixSelectInd[0]-1][matrixSelectInd[1]-1] = document.getElementById("matrixEditInput").value;
+                                newMatrix = matrixH;
+                        }else if(letter == "I"){
+                                matrixA[matrixSelectInd[0]-1][matrixSelectInd[1]-1] = document.getElementById("matrixEditInput").value;
+                                newMatrix = matrixI;
+                        }else if(letter == "J"){
+                                matrixA[matrixSelectInd[0]-1][matrixSelectInd[1]-1] = document.getElementById("matrixEditInput").value;
+                                newMatrix = matrixI;
                         }
-                }else if(isVisible(document.getElementById("listMath"))){
-                        if(selectedlistMathOption != -1){
-                                listMathChoose(selectedlistMathOption);
-                        }
-                }
-        }else if(isVisible(document.getElementById("testDiv"))){
-                if(isVisible(document.getElementById("testTest"))){
-                        if(selectedTestTestOption != -1){
-                                testTestChoose(selectedTestTestOption);
-                        }
-                }else if(isVisible(document.getElementById("testLogic"))){
-                        if(selectedTestLogicOption != -1){
-                                testLogicChoose(selectedTestLogicOption);
-                        }
-                }
-        }else if(isVisible(document.getElementById("matrixDiv"))){
-                if(isVisible(document.getElementById("matrixNames"))){
-                        if(selectedMatrixNamesOption != -1){
-                                matrixNamesChoose(selectedMatrixNamesOption);
-                        }
-                }else if(isVisible(document.getElementById("matrixMath"))){
-                        if(selectedMatrixMathOption != -1){
-                                matrixMathChoose(selectedMatrixMathOption);
-                        }
-                }else if(isVisible(document.getElementById("matrixEdit"))){
-                        if(selectedMatrixEditOption != -1){
-                                matrixMathChoose(selectedMatrixEditOption);
-                        }
-                }
-        }else if(isVisible(document.getElementById("angleDiv"))){
-                if(selectedAngleOption != -1){
-                        angleChoose(selectedAngleOption);
+                        document.getElementsByClassName("matrixDisplay")[0].innerHTML = matrixToTable(newMatrix);
+                        highlightMatrixCell();
+                        refocusInput("matrixEditInput");
                 }
         }
+}
+
+function updateMatrixCols(letter, arr, newCols){
+        let tempArr = [];
+        for(let i = 0; i < arr.length; i++){
+                let r = [];
+                for(let j = 0; j < arr[0].length; j++){
+                        r.push(arr[i][j]);
+                }
+                tempArr.push(r);
+        }
+        if(arr[0].length < newCols){
+                for(let i = 0; i < newCols - arr[0].length; i++){
+                        for(let j = 0; j < arr.length; j++){
+                                tempArr[j].push(0);
+                        }
+                }
+        }else if(arr[0].length == newCols){
+                return arr;
+        }else if(arr[0].length > newCols){
+                let numToCut = arr[0].length - newCols;
+                for(let i = 0; i < arr.length; i++){
+                        tempArr[i].pop();
+                }
+        }
+        if(letter == "A"){
+                matrixA = tempArr;
+        }else if(letter == "B"){
+                matrixB = tempArr;
+        }else if(letter == "C"){
+                matrixC = tempArr;
+        }else if(letter == "D"){
+                matrixD = tempArr;
+        }else if(letter == "E"){
+                matrixE = tempArr;
+        }else if(letter == "F"){
+                matrixF = tempArr;
+        }else if(letter == "G"){
+                matrixG = tempArr;
+        }else if(letter == "H"){
+                matrixH = tempArr;
+        }else if(letter == "I"){
+                matrixI = tempArr;
+        }else if(letter == "J"){
+                matrixJ = tempArr;
+        }
+        return tempArr;
+}
+
+function updateMatrixRows(letter, arr, newRows){
+        let tempArr = [];
+        for(let i = 0; i < arr.length; i++){
+                let r = [];
+                for(let j = 0; j < arr[0].length; j++){
+                        r.push(arr[i][j]);
+                }
+                tempArr.push(r);
+        }
+        if(arr.length < newRows){
+                for(let i = 0; i < newRows - arr.length; i++){
+                        let row = [];
+                        for(let j = 0; j < tempArr[0].length; j++){
+                                row.push(0);
+                        }
+                        tempArr.push(row);
+                }
+        }else if(arr.length == newRows){
+                return arr;
+        }else if(arr.length > newRows){
+                let numToCut = arr.length - newRows;
+                for(let i = 0; i < numToCut; i++){
+                        tempArr.pop();
+                }
+        }
+        if(letter == "A"){
+                matrixA = tempArr;
+        }else if(letter == "B"){
+                matrixB = tempArr;
+        }else if(letter == "C"){
+                matrixC = tempArr;
+        }else if(letter == "D"){
+                matrixD = tempArr;
+        }else if(letter == "E"){
+                matrixE = tempArr;
+        }else if(letter == "F"){
+                matrixF = tempArr;
+        }else if(letter == "G"){
+                matrixG = tempArr;
+        }else if(letter == "H"){
+                matrixH = tempArr;
+        }else if(letter == "I"){
+                matrixI = tempArr;
+        }else if(letter == "J"){
+                matrixJ = tempArr;
+        }
+        return tempArr;;
+}
+
+function sortA(lst){
+        lst.sort();
+        return lst;
+}
+
+function sortD(lst){
+        lst.sort();
+        lst.reverse();
+        return lst;
+}
+
+function replaceAllSortA(eq){
+        while(eq.includes("sortA")){
+                eq = replaceOneSortA(eq);
+        }
+        return eq;
+}
+
+function replaceOneSortA(eq){
+        eq = parseEq(eq);
+        let origList = JSON.parse(eq.substring(eq.indexOf("(") + 1, eq.indexOf(")")));
+        let sortedList;
+        sortedList = sortA(origList);
+        eq = eq.substring(0, eq.indexOf("sortA")) + "[" + sortedList.toString() + "]" + eq.substring(eq.indexOf(")") + 1, eq.length);
+        return eq;
+}
+
+function replaceAllSortD(eq){
+        while(eq.includes("sortD")){
+                eq = replaceOneSortD(eq);
+        }
+        return eq;
+}
+
+function replaceOneSortD(eq){
+        eq = parseEq(eq);
+        let origList = JSON.parse(eq.substring(eq.indexOf("(") + 1, eq.indexOf(")")));
+        let sortedList;
+        sortedList = sortD(origList);
+        eq = eq.substring(0, eq.indexOf("sortD")) + "[" + sortedList.toString() + "]" + eq.substring(eq.indexOf(")") + 1, eq.length);
+        return eq;
 }
 
 function scrollToSelectedCell(){
         let cell =  document.getElementsByClassName("listTableEntry list" + selectedListCell[0] + " instance" + selectedListCell[1])[0];
         let off = cell.offsetTop;
         document.getElementById("listRow").scrollTop = off;
+}
+
+function clearList(listNum){
+        //redo inner html, make sure to reset current selected cell and highlight
+        let currTable = document.getElementsByClassName("listTable instance" + listNum)[0];
+        currTable.innerHTML="<tr><th class='listTableHeader'>L<sub>1</sub></th></tr><tr><th class='listTableEntry list" + listNum + " instance1 initialSelect'>----</th></tr>";
+        selectedListCell = [1, 1];
+        highlightSelectedCell();
+}
+
+function parseEq(eq){
+        let ret = eq;
+        //replace all x with *
+        //replace all / with /
+        ret = ret.replaceAll("stdDev", "std");
+        ret = ret.replaceAll("int", "floor");
+        ret = ret.replaceAll("log(", "log10(");
+        ret = ret.replaceAll("≥", ">=");
+        ret = ret.replaceAll("°", " deg");
+        //log, ln, logBASE
+        if(isRadian == false){
+                if(ret.includes("sin") || ret.includes("cos") || ret.includes("tan")){
+                        let sinOccur = allOccurencesTrig(ret, "sin");
+                        for(let i = 0; i < sinOccur.length; i++){
+                                ret = ret.substring(0, sinOccur[i]) + " deg" + ret.substring(sinOccur[i], ret.length);
+                        }
+                        let cosOccur = allOccurencesTrig(ret, "cos");
+                        for(let i = 0; i < cosOccur.length; i++){
+                                ret = ret.substring(0, cosOccur[i]) + " deg" + ret.substring(cosOccur[i], ret.length);
+                        }
+                        let tanOccur = allOccurencesTrig(ret, "tan");
+                        for(let i = 0; i < tanOccur.length; i++){
+                                ret = ret.substring(0, tanOccur[i]) + " deg" + ret.substring(tanOccur[i], ret.length);
+                        }
+                }
+        }
+
+        //log -> log10 -- immediately
+        //logBASE -> log, x -- after paren
+        //ln -> log, e
+        if(ret.includes("logBASE(") && parenIsClosed(ret, ret.indexOf("logBASE(") + 7)){
+                let beginInd = ret.indexOf("logBASE(") + 7;
+                let endInd = findClosedParen(ret, beginInd);
+                let innerContent = ret.substring(beginInd + 1, endInd);
+                let data = innerContent.split(',');
+                ret = ret.substring(0, ret.indexOf("logBASE(")) + "log(" + data[0] + ", " + data[1] + ")" + ret.substring(endInd + 1, ret.length);
+        }
+        if(ret.includes("ln(") && parenIsClosed(ret, ret.indexOf("ln(") + 2)){
+                let beginInd = ret.indexOf("ln(") + 2;
+                let endInd = findClosedParen(ret, beginInd);
+                let innerContent = ret.substring(beginInd + 1, endInd);
+                ret = ret.substring(0, ret.indexOf("logBASE(")) + "log(" + innerContent + ", e)" + ret.substring(endInd + 1, ret.length);
+        }
+
+        ret = ret.replaceAll("L1", "[" + list1 + "]");
+        ret = ret.replaceAll("L2", "[" + list2 + "]");
+        ret = ret.replaceAll("L3", "[" + list3 + "]");
+        ret = ret.replaceAll("L4", "[" + list4 + "]");
+        ret = ret.replaceAll("L5", "[" + list5 + "]");
+        ret = ret.replaceAll("L6", "[" + list6 + "]");
+
+        if(ret.includes("[A]")){
+                let matStr = "[";
+                for(let i = 0; i < matrixA.length; i++){
+                        matStr += "[" + matrixA[i] + "]";
+                        if(i != matrixA.length - 1){
+                                matStr += ",";
+                        }
+                }
+                matStr += "]";
+                ret = ret.replaceAll("[A]", matStr);
+        }
+        if(ret.includes("[B]")){
+                let matStr = "[";
+                for(let i = 0; i < matrixB.length; i++){
+                        matStr += "[" + matrixB[i] + "]";
+                        if(i != matrixB.length - 1){
+                                matStr += ",";
+                        }
+                }
+                matStr += "]";
+                ret = ret.replaceAll("[B]", matStr);
+        }if(ret.includes("[C]")){
+                let matStr = "[";
+                for(let i = 0; i < matrixC.length; i++){
+                        matStr += "[" + matrixC[i] + "]";
+                        if(i != matrixC.length - 1){
+                                matStr += ",";
+                        }
+                }
+                matStr += "]";
+                ret = ret.replaceAll("[C]", matStr);
+        }if(ret.includes("[D]")){
+                let matStr = "[";
+                for(let i = 0; i < matrixD.length; i++){
+                        matStr += "[" + matrixD[i] + "]";
+                        if(i != matrixD.length - 1){
+                                matStr += ",";
+                        }
+                }
+                matStr += "]";
+                ret = ret.replaceAll("[D]", matStr);
+        }if(ret.includes("[E]")){
+                let matStr = "[";
+                for(let i = 0; i < matrixE.length; i++){
+                        matStr += "[" + matrixE[i] + "]";
+                        if(i != matrixE.length - 1){
+                                matStr += ",";
+                        }
+                }
+                matStr += "]";
+                ret = ret.replaceAll("[E]", matStr);
+        }if(ret.includes("[F]")){
+                let matStr = "[";
+                for(let i = 0; i < matrixF.length; i++){
+                        matStr += "[" + matrixF[i] + "]";
+                        if(i != matrixF.length - 1){
+                                matStr += ",";
+                        }
+                }
+                matStr += "]";
+                ret = ret.replaceAll("[F]", matStr);
+        }if(ret.includes("[G]")){
+                let matStr = "[";
+                for(let i = 0; i < matrixG.length; i++){
+                        matStr += "[" + matrixG[i] + "]";
+                        if(i != matrixG.length - 1){
+                                matStr += ",";
+                        }
+                }
+                matStr += "]";
+                ret = ret.replaceAll("[G]", matStr);
+        }if(ret.includes("[H]")){
+                let matStr = "[";
+                for(let i = 0; i < matrixH.length; i++){
+                        matStr += "[" + matrixH[i] + "]";
+                        if(i != matrixH.length - 1){
+                                matStr += ",";
+                        }
+                }
+                matStr += "]";
+                ret = ret.replaceAll("[H]", matStr);
+        }if(ret.includes("[I]")){
+                let matStr = "[";
+                for(let i = 0; i < matrixI.length; i++){
+                        matStr += "[" + matrixI[i] + "]";
+                        if(i != matrixI.length - 1){
+                                matStr += ",";
+                        }
+                }
+                matStr += "]";
+                ret = ret.replaceAll("[I]", matStr);
+        }if(ret.includes("[J]")){
+                let matStr = "[";
+                for(let i = 0; i < matrixJ.length; i++){
+                        matStr += "[" + matrixJ[i] + "]";
+                        if(i != matrixJ.length - 1){
+                                matStr += ",";
+                        }
+                }
+                matStr += "]";
+                ret = ret.replaceAll("[J]", matStr);
+        }
+
+        for(let i = 0; i < allVars.length; i++){
+                if(ret.includes(allVars[i])){
+                        ret = ret.replaceAll(allVars[i], varStorage[i]);
+                }
+        }
+        if(ret.includes("=")){
+                for(let i = 1; i <= ret.length; i++){
+                        if(ret[i] == "=" && ret[i-1] != "=" && ret[i+1] != "=" && ret[i-1] != "!" && ret[i-1] != ">" && ret[i-1] != "<"){
+                                ret = ret.substr(0, i) + "==" + ret.substr(i+1, ret.length);
+                        }
+                }
+        }
+        if(ret.includes("nDeriv(") && parenIsClosed(ret, ret.indexOf("nDeriv(") + 6)){
+                let beginInd = ret.indexOf("nDeriv(") + 6;
+                let endInd = findClosedParen(ret, beginInd);
+                let innerContent = ret.substring(beginInd + 1, endInd);
+                //exp, var, int
+                let vals = innerContent.split(",");
+                if(vals.length == 2){
+                        ret = ret.substring(0, ret.indexOf("nDeriv(")) + "derivative(" + vals[0] + ")" + ret.substring(endInd + 1, ret.length);
+                }else if(vals.length == 3){
+                        //alert("hello");
+                        //alert(vals);
+                        let expr = math.derivative(vals[0], vals[1]);
+                        expr = math.string(expr);
+                        expr = expr.replaceAll(vals[1], vals[2]);
+                        //alert(expr);
+                        ret = ret.substring(0, ret.indexOf("nDeriv(")) + expr + ret.substring(endInd + 1, ret.length);
+                }
+        }
+        return ret;
+}
+
+/*let expr = math.derivative("x^2", "x");
+expr = math.string(expr);
+expr = expr.replaceAll("x", "2");
+alert(expr);*/
+
+
+const updateStrs = function(e){//ln, log, logBASE
+        let currInput = e.target.value;
+
+        if(currInput == currInputOrig){
+                //do nothing
+        }else if(currInput.includes(currInputOrig)){
+                let otherStr = subtractStr(currInput, currInputOrig);
+                if(otherStr == false){
+                        currInputOrig = currInput;
+                        currFormatted = parseFormatted(currInput);
+                }else{
+                        currInputOrig += otherStr;
+                        currFormatted += otherStr;
+                        currFormatted = parseFormatted(currFormatted);
+                }
+        }else{
+                currInputOrig = currInput;
+                currFormatted = parseFormatted(currInput);
+        }
+        document.getElementById("formattedEq").innerHTML = currFormatted;
+        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+
+        //currInput.replaceAll("-", " - ");
+        
+        currInputOrig = currInputOrig.replaceAll("°", " deg");
+
+        //for enter btn
+        /*
+        currInputOrig = currInputOrig.replaceAll("*", " * ");
+        currInputOrig = currInputOrig.replaceAll("=", "==");
+        currInputOrig = currInputOrig.replaceAll("+", " + ");
+        currInput.replaceAll("-", " - ");
+
+        */
+        document.getElementById("userInput").value = currInputOrig;
+}
+
+function parseFormatted(eq){
+        let eqtemp = eq;
+
+        //eqtemp = eqtemp.replace(/'*'/g, '×');
+        eqtemp = eqtemp.replaceAll("asin", "\\sin^{-1}");
+        eqtemp = eqtemp.replaceAll("acos", "\\cos^{-1}");
+        eqtemp = eqtemp.replaceAll("atan", "\\tan^{-1}");
+        //do degrees, sin, cos, tan, asin, acos, atan
+
+        eqtemp = eqtemp.replaceAll(">=", " \\geq ");
+        eqtemp = eqtemp.replaceAll("<=", " \\leq ");
+        eqtemp = eqtemp.replaceAll("!=", "=\\not\\,");
+
+        eqtemp = eqtemp.replaceAll("PI", "\\pi");
+        //eqtemp = eqtemp.replaceAll("nthRoot", "\sqrt["); get n first
+        //\sqrt[n]{x
+        if(eqtemp.includes("sqrt(") && parenIsClosed(eqtemp, eqtemp.indexOf("sqrt(") + 4)){
+                let beginInd = eqtemp.indexOf("sqrt(") + 4;
+                let endInd = findClosedParen(eqtemp, beginInd);
+                let innerContent = eq.substring(beginInd + 1, endInd);
+                eqtemp = eqtemp.substring(0, eq.indexOf("sqrt(")) + "\\sqrt{" + innerContent + "\}" + eq.substring(endInd + 1, eq.length);
+        }
+        if(eqtemp.includes("cbrt(") && parenIsClosed(eqtemp, eqtemp.indexOf("cbrt(") + 4)){
+                let beginInd = eqtemp.indexOf("cbrt(") + 4;
+                let endInd = findClosedParen(eqtemp, beginInd);
+                let innerContent = eqtemp.substring(beginInd + 1, endInd);
+
+                eqtemp = eqtemp.substring(0, eq.indexOf("cbrt(")) + "\\sqrt[3]{" + innerContent + "\}" + eq.substring(endInd + 1, eq.length);
+        }
+        if(eqtemp.includes("nthRoot(") && parenIsClosed(eqtemp, eqtemp.indexOf("nthRoot(") + 7)){
+                let beginInd = eqtemp.indexOf("nthRoot(") + 7;
+                let endInd = findClosedParen(eqtemp, beginInd);
+                let innerContent = eqtemp.substring(beginInd + 1, endInd);
+                let vals = innerContent.split(",");
+
+                eqtemp = eqtemp.substring(0, eq.indexOf("nthRoot(")) + "\\sqrt[" + vals[0] + "]{" + vals[1] + "\}" + eq.substring(endInd + 1, eq.length);
+        }
+        if(eqtemp.includes("fnInt(") && parenIsClosed(eqtemp, eqtemp.indexOf("fnInt(") + 5)){
+                let beginInd = eqtemp.indexOf("fnInt(") + 5;
+                let endInd = findClosedParen(eqtemp, beginInd);
+                let innerContent = eqtemp.substring(beginInd + 1, endInd);
+                //exp, var, lower, upper
+                let vals = innerContent.split(",");
+
+                eqtemp = eqtemp.substring(0, eq.indexOf("fnInt(")) + "\\int_" + vals[2] + "^" + vals[3] + " " + vals[0] + "\\ d" + vals[1] + eq.substring(endInd + 1, eq.length);
+        }
+        if(eqtemp.includes("nDeriv(") && parenIsClosed(eqtemp, eqtemp.indexOf("nDeriv(") + 6)){
+                let beginInd = eqtemp.indexOf("nDeriv(") + 6;
+                let endInd = findClosedParen(eqtemp, beginInd);
+                let innerContent = eqtemp.substring(beginInd + 1, endInd);
+                //exp, var, int
+                let vals = innerContent.split(",");
+
+                eqtemp = eqtemp.substring(0, eq.indexOf("nDeriv(")) + "\\frac{d}{d" + vals[1] + "}\\ " + vals[0] + "\\ _{" + vals[1] + " = " + vals[2] + "}" + eq.substring(endInd + 1, eq.length);
+        }
+        if(eqtemp.includes("^(") && parenIsClosed(eqtemp, eqtemp.indexOf("^(") + 1)){
+                let beginInd = eqtemp.indexOf("^(") + 1;
+                let endInd = findClosedParen(eqtemp, beginInd);
+                let innerContent = eqtemp.substring(beginInd + 1, endInd);
+                //exp, var, lower, upper
+                //let vals = innerContent.split(",");
+
+                eqtemp = eqtemp.substring(0, eq.indexOf("^(") + 1) + "{" + innerContent + "}" + eq.substring(endInd + 1, eq.length);
+        }
+        if(eqtemp.includes("∛(") && parenIsClosed(eqtemp, eqtemp.indexOf("∛(") + 1)){
+                let beginInd = eqtemp.indexOf("∛(") + 1;
+                let endInd = findClosedParen(eqtemp, beginInd);
+                let innerContent = eqtemp.substring(beginInd + 2, endInd);
+
+                eqtemp = eqtemp.substring(0, eq.indexOf("∛(")) + "\\sqrt[3]{" + innerContent + "}" + eq.substring(endInd + 1, eq.length);
+        }
+        if(eqtemp.includes("ⁿ√(") && parenIsClosed(eqtemp, eqtemp.indexOf("ⁿ√(") + 2)){
+                let beginInd = eqtemp.indexOf("ⁿ√(") + 2;
+                let endInd = findClosedParen(eqtemp, beginInd);
+                let innerContent = eqtemp.substring(beginInd + 1, endInd);
+                //exp, var, lower, upper
+                let vals = innerContent.split(",");
+                if(vals.length == 2){
+                        eqtemp = eqtemp.substring(0, eq.indexOf("ⁿ√(")) + "\\sqrt[" + vals[1] + "]{" + vals[0] + "}" + eq.substring(endInd + 1, eq.length);
+                }
+        }//alert(math.derivative("x^(2)", "x"));
+        if(eqtemp.includes("logBASE(") && parenIsClosed(eqtemp, eqtemp.indexOf("logBASE(") + 7)){
+                let beginInd = eqtemp.indexOf("logBASE(") + 7;
+                let endInd = findClosedParen(eqtemp, beginInd);
+                let innerContent = eqtemp.substring(beginInd + 1, endInd);
+                //exp, var, lower, upper
+                let vals = innerContent.split(",");
+                if(vals.length == 2){
+                        eqtemp = eqtemp.substring(0, eq.indexOf("logBASE(")) + "log_{" + vals[1] + "}(" + vals[0] + ")" + eq.substring(endInd + 1, eq.length);
+                }
+        }
+        if(eqtemp.includes("nCr(") && parenIsClosed(eqtemp, eqtemp.indexOf("nCr(") + 3)){
+                let beginInd = eqtemp.indexOf("nCr(") + 3;
+                let endInd = findClosedParen(eqtemp, beginInd);
+                let innerContent = eqtemp.substring(beginInd + 1, endInd);
+                //exp, var, lower, upper
+                let vals = innerContent.split(",");
+                if(vals.length == 2){
+                        eqtemp = eqtemp.substring(0, eq.indexOf("nCr(")) + "_{" + vals[0] + "}C_{" + vals[1] + "}" + eq.substring(endInd + 1, eq.length);
+                }
+        }
+        
+        
+
+        return eqtemp;
+}
+
+document.getElementById("userInput").addEventListener("input", updateStrs);
+document.getElementById("userInput").addEventListener("propertychange", updateStrs);
+
+function parenIsClosed(str, pos){
+        if(findClosedParen(str, pos) == -1){
+                return false;
+        }else return true;
+}
+
+function findClosedParen(str, pos) {
+        if (str[pos] != '(') {
+          throw new Error("No '(' at index " + pos);
+        }
+        let depth = 1;
+        for (let i = pos + 1; i < str.length; i++) {
+          switch (str[i]) {
+          case '(':
+            depth++;
+            break;
+          case ')':
+            if (--depth == 0) {
+              return i;
+            }
+            break;
+          }
+        }
+        return -1;    // No matching closing parenthesis
 }
 
 function clearBtn(){
@@ -483,7 +998,11 @@ function clearBtn(){
                 refocusInput("currValInput");
         }else{
                 if(isVisible(document.getElementById("normDiv"))){
+                        currFormatted = "";
+                        currInputOrig = "";
                         clears("userInput");
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        
                 }else if(isVisible(document.getElementById("statDiv"))){
                         if(isVisible(document.getElementById("statEditEditDiv"))){
                                 clears("currValInput");
@@ -492,12 +1011,8 @@ function clearBtn(){
         }
 }
 
-function clears(id){
-        document.getElementById(id).value = "";
-        refocusInput(id);
-}
-
 function deletes(id){
+        //currInputOrig = currInputOrig.substring(0, currInputOrig.length-1);
         document.getElementById(id).value = document.getElementById(id).value.substring(0, document.getElementById(id).value.length - 1);
         refocusInput(id);
 }
@@ -513,7 +1028,15 @@ function delBtn(){
                 refocusInput("currValInput");
         }else{
                 if(isVisible(document.getElementById("normDiv"))){
-                        deletes("userInput");
+                        if(currInputOrig.trim() == ""){
+                                currFormatted = "";
+                                document.getElementById("formattedEq").innerHTML = currFormatted;
+                        }else{
+                                currInputOrig = currInputOrig.slice(0, currInputOrig.length-1);
+                                currFormatted = currFormatted.slice(0, currFormatted.length-1);
+                                document.getElementById("userInput").value = currInputOrig;
+                                document.getElementById("formattedEq").innerHTML = currFormatted;
+                        }
                 }else if(isVisible(document.getElementById("statDiv"))){
                         if(isVisible(document.getElementById("statEditEditDiv"))){
                                 deletes("currValInput");
@@ -534,34 +1057,6 @@ function modeBtn(){
         }
         else{
                 showScreen("modeDiv");
-        }
-}
-
-
-function showScreen(showId){
-        document.getElementById(showId).style.display = "block";
-
-        if(showId != "normDiv"){
-                document.getElementById("normDiv").style.display = "none";
-        }
-        if(showId != "modeDiv"){
-                document.getElementById("modeDiv").style.display = "none";
-        }
-        if(showId != "offDiv"){
-                document.getElementById("offDiv").style.display = "none";
-        }
-        if(showId != "statDiv"){
-                document.getElementById("statDiv").style.display = "none";
-        }
-        if(showId != "statList"){
-                document.getElementById("statList").style.display = "none";
-        }if(showId != "testDiv"){
-                document.getElementById("testDiv").style.display = "none";
-        }if(showId != "matrixDiv"){
-                document.getElementById("matrixDiv").style.display = "none";
-        }
-        if(showId != "angleDiv"){
-                document.getElementById("angleDiv").style.display = "none";
         }
 }
 
@@ -617,10 +1112,6 @@ function alphaBtn(){
         }
 }
 
-function refocusInput(id){
-        document.getElementById(id).focus();
-}
-
 
 
 
@@ -629,13 +1120,28 @@ function sinBtn(){
                 if(secondOn){
                         //do inverse sin
                         displayInput('asin(', "userInput");
+                        currFormatted += 'asin(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'asin(';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput('E', "userInput");
+                        currFormatted += 'E';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'E';
                         toggleAlpha();
                 }
                 else{
                         displayInput('sin(', "userInput");
+                        currFormatted += 'sin(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'sin(';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -662,13 +1168,28 @@ function cosBtn(){
                 if(secondOn){
                         //do inverse sin
                         displayInput('acos(', "userInput");
+                        currFormatted += 'acos(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'acos(';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput('F', "userInput");
+                        currFormatted += 'F';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'F';
                         toggleAlpha();
                 }
                 else{
                         displayInput('cos(', "userInput");
+                        currFormatted += 'cos(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'cos(';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -694,13 +1215,28 @@ function tanBtn(){
                 if(secondOn){
                         //do inverse sin
                         displayInput('atan(', "userInput");
+                        currFormatted += 'atan(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'atan(';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput('G', "userInput");
+                        currFormatted += 'G';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'G';
                         toggleAlpha();
                 }
                 else{
                         displayInput('tan(', "userInput");
+                        currFormatted += 'tan(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'tan(';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -725,13 +1261,28 @@ function superBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("𝝿", "userInput");
+                        currFormatted += 'PI';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'PI';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput('H', "userInput");
+                        currFormatted += 'H';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'H';
                         toggleAlpha();
                 }
                 else{
                         displayInput("^(", "userInput");
+                        currFormatted += '^(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '^(';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -756,13 +1307,28 @@ function squaredBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("√(", "userInput");
+                        currFormatted += 'sqrt(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'sqrt(';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("I", "userInput");
+                        currFormatted += 'I';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'I';
                         toggleAlpha();
                 }
                 else{
                         displayInput('^(2)', "userInput");
+                        currFormatted += '^{2}';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '^(2)';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -786,16 +1352,31 @@ function divisionBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("e", "userInput");
+                        currFormatted += 'e';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'e';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("M", "userInput");
+                        currFormatted += 'M';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'M';
                         toggleAlpha();
                 }
                 else{
                         if(document.getElementById("userInput").value == ""){
                                 displayInput(allPrevAns[allPrevAns.length-1], "userInput");
                         }
-                        displayInput(' ÷ ', "userInput");
+                        displayInput(' / ', "userInput");
+                        currFormatted += ' / ';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '/';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -819,13 +1400,28 @@ function logBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("10^(", "userInput");
+                        currFormatted += '10^(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '10^(';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("N", "userInput");
+                        currFormatted += 'N';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'N';
                         toggleAlpha();
                 }
                 else{
                         displayInput('log(', "userInput");
+                        currFormatted += 'log(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'log10(';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -845,18 +1441,6 @@ function logBtn(){
         }
 }
 
-/*
-if(isVisible(document.getElementById("normDiv"))){
-        
-        refocusInput("userInput");
-}else if(isVisible(document.getElementById("statDiv"))){
-        if(isVisible(document.getElementById("statEditEditDiv"))){
-                
-                refocusInput("currValInput");
-        }
-}
-*/
-
 function lnBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
@@ -864,10 +1448,20 @@ function lnBtn(){
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("S", "userInput");
+                        currFormatted += 'S';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'S';
                         toggleAlpha();
                 }
                 else{
                         displayInput('ln(', "userInput");
+                        currFormatted += 'ln(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'ln(';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -908,10 +1502,20 @@ function periodBtn(){
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput(":", "userInput");
+                        currFormatted += ':';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += ':';
                         toggleAlpha();
                 }
                 else{
                         displayInput('.', "userInput");
+                        currFormatted += '.';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '.';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -940,10 +1544,20 @@ function negBtn(){
                         }
                 }else if(alphaOn){
                         displayInput("?", "userInput");
+                        currFormatted += '?';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '?';
                         toggleAlpha();        
                 }
                 else{
                         displayInput('-', "userInput");
+                        currFormatted += '-';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '-';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -970,12 +1584,22 @@ function addBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(alphaOn){
                         displayInput('"', "userInput");
+                        currFormatted += '"';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '"';
                         toggleAlpha();
                 }else{
                         if(document.getElementById("userInput").value == ""){
                                 displayInput(allPrevAns[allPrevAns.length-1], "userInput");
                         }
                         displayInput(' + ', "userInput");
+                        currFormatted += ' + ';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '+';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -995,16 +1619,31 @@ function subBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("]", "userInput");
+                        currFormatted += ']';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += ']';
                         toggle2nd();
                 }
                 else if(alphaOn){
                         displayInput("W", "userInput");
+                        currFormatted += 'W';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'W';
                         toggleAlpha();
                 }else{
                         if(document.getElementById("userInput").value == ""){
                                 displayInput(allPrevAns[allPrevAns.length-1], "userInput");
                         }
                         displayInput(' - ', "userInput");
+                        currFormatted += ' - ';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '-';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1024,19 +1663,35 @@ function subBtn(){
         }
 }
 
+
 function multBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("[", "userInput");
+                        currFormatted += '[';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '[';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("R", "userInput");
+                        currFormatted += 'R';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'R';
                         toggleAlpha();
                 }else{
                         if(document.getElementById("userInput").value == ""){
                                 displayInput(allPrevAns[allPrevAns.length-1], "userInput");
                         }
                         displayInput(' × ', "userInput");
+                        currFormatted += ' * ';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '*';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1067,9 +1722,19 @@ function stoBtn(){
                 if(isVisible(document.getElementById("normDiv"))){
                         if(alphaOn){
                                 displayInput("X", "userInput");
+                                currFormatted += 'X';
+                                currFormatted = parseFormatted(currFormatted);
+                                document.getElementById("formattedEq").innerHTML = currFormatted;
+                                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                                currInputOrig += 'X';
                                 toggleAlpha();
                         }else{
                                 displayInput(' → ', "userInput");
+                                currFormatted += ' → ';
+                                currFormatted = parseFormatted(currFormatted);
+                                document.getElementById("formattedEq").innerHTML = currFormatted;
+                                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                                currInputOrig += '→';
                         }
                         refocusInput("userInput");
                 }else if(isVisible(document.getElementById("statDiv"))){
@@ -1111,6 +1776,11 @@ function mathBtn(){
                 if(isVisible(document.getElementById("normDiv"))){
                         if(alphaOn){
                                 displayInput("A", "userInput");
+                                currFormatted += 'A';
+                                currFormatted = parseFormatted(currFormatted);
+                                document.getElementById("formattedEq").innerHTML = currFormatted;
+                                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                                currInputOrig += 'A';
                                 toggleAlpha();
                         }
                         refocusInput("userInput");
@@ -1134,6 +1804,11 @@ function appsBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(alphaOn){
                         displayInput("B", "userInput");
+                        currFormatted += 'B';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'B';
                         toggleAlpha();
                 }
                 refocusInput("userInput");
@@ -1152,6 +1827,11 @@ function prgmBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(alphaOn){
                         displayInput("C", "userInput");
+                        currFormatted += 'C';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'C';
                         toggleAlpha();
                 }
                 refocusInput("userInput");
@@ -1176,9 +1856,19 @@ function inverseBtn(){
                 if(isVisible(document.getElementById("normDiv"))){
                         if(alphaOn){
                                 displayInput("D", "userInput");
+                                currFormatted += 'D';
+                                currFormatted = parseFormatted(currFormatted);
+                                document.getElementById("formattedEq").innerHTML = currFormatted;
+                                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                                currInputOrig += 'D';
                                 toggleAlpha();
                         }else{
                                 displayInput("^(-1)", "userInput");
+                                currFormatted += '^{-1}';
+                                currFormatted = parseFormatted(currFormatted);
+                                document.getElementById("formattedEq").innerHTML = currFormatted;
+                                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                                currInputOrig += '^(-1)';
                         }
                         refocusInput("userInput");
                 }else if(isVisible(document.getElementById("statDiv"))){
@@ -1204,9 +1894,19 @@ function commaBtn(){
                 if(isVisible(document.getElementById("normDiv"))){
                         if(alphaOn){
                                 displayInput("J", "userInput");
+                                currFormatted += 'J';
+                                currFormatted = parseFormatted(currFormatted);
+                                document.getElementById("formattedEq").innerHTML = currFormatted;
+                                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                                currInputOrig += 'J';
                                 toggleAlpha();
                         }else{
                                 displayInput(',', "userInput");
+                                currFormatted += ',';
+                                currFormatted = parseFormatted(currFormatted);
+                                document.getElementById("formattedEq").innerHTML = currFormatted;
+                                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                                currInputOrig += ',';
                         }
                         refocusInput("userInput");
                 }else if(isVisible(document.getElementById("statDiv"))){
@@ -1239,12 +1939,27 @@ function frontParenBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("{", "userInput");
+                        currFormatted += '\\{';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '{';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("K", "userInput");
+                        currFormatted += 'K';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'K';
                         toggleAlpha();
                 }else{
                         displayInput("(", "userInput");
+                        currFormatted += '(';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '(';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1267,12 +1982,27 @@ function backParenBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("}", "userInput");
+                        currFormatted += '\\}';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '}';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("L", "userInput");
+                        currFormatted += 'L';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'L';
                         toggleAlpha();
                 }else{
                         displayInput(")", "userInput");
+                        currFormatted += ')';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += ')';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1293,11 +2023,30 @@ function backParenBtn(){
 
 function sevenBtn(){
         if(isVisible(document.getElementById("normDiv"))){
-                if(alphaOn){
+                if(secondOn){
+                        displayInput("u", "userInput");
+                        currFormatted += 'u';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'u';
+                        toggle2nd();
+                }
+                else if(alphaOn){
                         displayInput("O", "userInput");
+                        currFormatted += 'O';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'O';
                         toggleAlpha();
                 }else{
                         displayInput('7', "userInput");
+                        currFormatted += '7';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '7';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1320,17 +2069,45 @@ function sevenBtn(){
                                 listMathChoose(8);
                         }
                 }
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathMathChoose(7);
+                        }
+                }
         }
 }
 
 
 function eightBtn(){
         if(isVisible(document.getElementById("normDiv"))){
-                if(alphaOn){
+                if(secondOn){
+                        displayInput("v", "userInput");
+                        currFormatted += 'v';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'v';
+                        toggle2nd();
+                }else if(alphaOn){
                         displayInput("P", "userInput");
+                        currFormatted += 'P';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'P';
                         toggleAlpha();
                 }else{
                         displayInput('8', "userInput");
+                        currFormatted += '8';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '8';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1353,17 +2130,46 @@ function eightBtn(){
                                 listMathChoose(8);
                         }
                 }
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathMathChoose(8);
+                        }
+                }
         }
 }
 
 
 function nineBtn(){
         if(isVisible(document.getElementById("normDiv"))){
-                if(alphaOn){
+                if(secondOn){
+                        displayInput("w", "userInput");
+                        currFormatted += 'w';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'w';
+                        toggle2nd();
+                }
+                else if(alphaOn){
                         displayInput("Q", "userInput");
+                        currFormatted += 'Q';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'Q';
                         toggleAlpha();
                 }else{
                         displayInput('9', "userInput");
+                        currFormatted += '9';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '9';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1384,12 +2190,27 @@ function fourBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("L4", "userInput");
+                        currFormatted += 'L4';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'L4';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("T", "userInput");
+                        currFormatted += 'T';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'T';
                         toggleAlpha();
                 }else{
                         displayInput('4', "userInput");
+                        currFormatted += '4';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '4';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1450,6 +2271,24 @@ function fourBtn(){
                                 testLogicChoose(4);
                         }
                 }
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathMathChoose(4);
+                        }
+                }else if(isVisible(document.getElementById("mathNum"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathNumChoose(4);
+                        }
+                }
         }
 }
 
@@ -1458,12 +2297,27 @@ function fiveBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("L5", "userInput");
+                        currFormatted += 'L5';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'L5';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("U", "userInput");
+                        currFormatted += 'U';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'U';
                         toggleAlpha();
                 }else{
                         displayInput('5', "userInput");
+                        currFormatted += '5';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '5';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1514,6 +2368,16 @@ function fiveBtn(){
                                 testLogicChoose(5);
                         }
                 }
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathMathChoose(5);
+                        }
+                }
         }
 }
 
@@ -1521,12 +2385,27 @@ function sixBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("L6", "userInput");
+                        currFormatted += 'L6';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'L6';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("V", "userInput");
+                        currFormatted += 'V';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'V';
                         toggleAlpha();
                 }else{
                         displayInput('6', "userInput");
+                        currFormatted += '6';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '6';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1569,6 +2448,16 @@ function sixBtn(){
                                 testTestChoose(6);
                         }
                 }
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathMathChoose(6);
+                        }
+                }
         }
 }
 
@@ -1578,12 +2467,27 @@ function oneBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("L1", "userInput");
+                        currFormatted += 'L1';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'L1';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("Y", "userInput");
+                        currFormatted += 'Y';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'Y';
                         toggleAlpha();
                 }else{
                         displayInput('1', "userInput");
+                        currFormatted += '1';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '1';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1643,6 +2547,40 @@ function oneBtn(){
                                 testLogicChoose(1);
                         }
                 }
+        }else if(isVisible(document.getElementById("angleDiv"))){
+                if(secondOn){
+                        toggle2nd();
+                }else if(alphaOn){
+                        toggleAlpha();
+                }else{
+                        angleChoose(1);
+                }
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathMathChoose(1);
+                        }
+                }else if(isVisible(document.getElementById("mathNum"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathNumChoose(1);
+                        }
+                }else if(isVisible(document.getElementById("mathPrb"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathPrbChoose(1);
+                        }
+                }
         }
 }
 
@@ -1651,12 +2589,27 @@ function twoBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("L2", "userInput");
+                        currFormatted += 'L2';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'L2';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("Z", "userInput");
+                        currFormatted += 'Z';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'Z';
                         toggleAlpha();
                 }else{
                         displayInput('2', "userInput");
+                        currFormatted += '2';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '2';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1716,6 +2669,32 @@ function twoBtn(){
                                 testLogicChoose(2);
                         }
                 }
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathMathChoose(2);
+                        }
+                }else if(isVisible(document.getElementById("mathNum"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathNumChoose(2);
+                        }
+                }else if(isVisible(document.getElementById("mathPrb"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathPrbChoose(2);
+                        }
+                }
         }
 }
 
@@ -1724,12 +2703,27 @@ function threeBtn(){
         if(isVisible(document.getElementById("normDiv"))){
                 if(secondOn){
                         displayInput("L3", "userInput");
+                        currFormatted += 'L3';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'L3';
                         toggle2nd();
                 }else if(alphaOn){
                         displayInput("θ", "userInput");
+                        currFormatted += 'θ';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += 'θ';
                         toggleAlpha();
                 }else{
                         displayInput('3', "userInput");
+                        currFormatted += '3';
+                        currFormatted = parseFormatted(currFormatted);
+                        document.getElementById("formattedEq").innerHTML = currFormatted;
+                        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                        currInputOrig += '3';
                 }
                 refocusInput("userInput");
         }else if(isVisible(document.getElementById("statDiv"))){
@@ -1789,6 +2783,32 @@ function threeBtn(){
                                 testLogicChoose(3);
                         }
                 }
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathMathChoose(3);
+                        }
+                }else if(isVisible(document.getElementById("mathNum"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathNumChoose(3);
+                        }
+                }else if(isVisible(document.getElementById("mathPrb"))){
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                toggleAlpha();
+                        }else{
+                                mathPrbChoose(3);
+                        }
+                }
         }
 }
 
@@ -1801,9 +2821,19 @@ function zeroBtn(){
                 if(isVisible(document.getElementById("normDiv"))){
                         if(alphaOn){
                                 displayInput(" ", "userInput");
+                                currFormatted += ' ';
+                                currFormatted = parseFormatted(currFormatted);
+                                document.getElementById("formattedEq").innerHTML = currFormatted;
+                                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                                currInputOrig += ' ';
                                 toggleAlpha();
                         }else{
                                 displayInput('0', "userInput");
+                                currFormatted += '0';
+                                currFormatted = parseFormatted(currFormatted);
+                                document.getElementById("formattedEq").innerHTML = currFormatted;
+                                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                                currInputOrig += '0';
                         }
                         refocusInput("userInput");
                 }else if(isVisible(document.getElementById("statDiv"))){
@@ -1831,18 +2861,6 @@ function zeroBtn(){
                 }
         }
 }
-
-/*
-if(isVisible(document.getElementById("normDiv"))){
-        
-        refocusInput("userInput");
-}else if(isVisible(document.getElementById("statDiv"))){
-        if(isVisible(document.getElementById("statEditEditDiv"))){
-                
-                refocusInput("currValInput");
-        }
-}
-*/
 
 function focusPrev(num, child){
         unfocusPrev();
@@ -1998,6 +3016,65 @@ function downBtn(){
                         selectedAngleOption += 1;
                 }
                 selectOption("angleContent", selectedAngleOption);
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        if(selectedMathMathOption == -1){
+                                selectedMathMathOption = 1;
+                        }else if(selectedMathMathOption == 8){
+                                selectedMathMathOption = -1;
+                        }else{
+                                selectedMathMathOption += 1;
+                        }
+                        selectOption("mathMath", selectedMathMathOption);
+                }
+                else if(isVisible(document.getElementById("mathNum"))){
+                        if(selectedMathNumOption == -1){
+                                selectedMathNumOption = 1;
+                        }else if(selectedMathNumOption == 4){
+                                selectedMathNumOption = -1;
+                        }else{
+                                selectedMathNumOption += 1;
+                        }
+                        selectOption("mathNum", selectedMathNumOption);
+                }else if(isVisible(document.getElementById("mathPrb"))){
+                        if(selectedMathPrbOption == -1){
+                                selectedMathPrbOption = 1;
+                        }else if(selectedMathPrbOption == 3){
+                                selectedMathPrbOption = -1;
+                        }else{
+                                selectedMathPrbOption += 1;
+                        }
+                        selectOption("mathPrb", selectedMathPrbOption);
+                }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                let matrixLetter = document.getElementById("matrixName").innerHTML.substring(document.getElementById("matrixName").innerHTML.indexOf("[") + 1, document.getElementById("matrixName").innerHTML.indexOf("]"));
+                let matrices = ["A", "B", "C", "D", "E", "F", "G", "H","I", "J"];
+                let matricesVals = [matrixA, matrixB,matrixC,matrixD,matrixE,matrixF,matrixG,matrixH,matrixI,matrixJ];
+                let matrixArr = matricesVals[matrices.indexOf(matrixLetter)];
+                if(inputFocusInd == 1 || inputFocusInd == 2){
+                        inputFocusInd = -1;
+                        matrixSelectInd = [1, 1];
+                        document.getElementById("matrixRowsInput").style.backgroundColor = "transparent";
+                        document.getElementById("matrixColsInput").style.backgroundColor = "transparent";
+                        highlightMatrixCell();
+                        document.getElementById("matrixEditInput").value = "";
+                        displayInput(matrixArr[matrixSelectInd[0]-1][matrixSelectInd[1]-1], "matrixEditInput");
+                        document.getElementById("beforeMatrixInput").innerHTML = "[" + matrixSelectInd[0] + ", " + matrixSelectInd[1] + "]: ";
+                        refocusInput("matrixEditInput");
+                }else if(inputFocusInd == -1){
+                        if(matrixSelectInd[0] == matrixArr.length){
+                                //do nothing
+                                refocusInput("matrixEditInput");
+                        }else{
+                                matrixSelectInd[0] += 1;
+                                highlightMatrixCell();
+                                document.getElementById("matrixEditInput").value = "";
+                                displayInput(matrixArr[matrixSelectInd[0]-1][matrixSelectInd[1]-1], "matrixEditInput");
+                                document.getElementById("beforeMatrixInput").innerHTML = "[" + matrixSelectInd[0] + ", " + matrixSelectInd[1] + "]: ";
+                                refocusInput("matrixEditInput");
+                        }
+                }
+                //matrixSelectInd
         }
 }
 
@@ -2113,6 +3190,62 @@ function upBtn(){
                         selectedAngleOption -= 1;
                 }
                 selectOption("angleContent", selectedAngleOption);
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        if(selectedMathMathOption == -1){
+                                selectedMathMathOption = 8;
+                        }else if(selectedMathMathOption == 1){
+                                selectedMathMathOption = -1;
+                        }else{
+                                selectedMathMathOption -= 1;
+                        }
+                        selectOption("mathMath", selectedMathMathOption);
+                }
+                else if(isVisible(document.getElementById("mathNum"))){
+                        if(selectedMathNumOption == -1){
+                                selectedMathNumOption = 4;
+                        }else if(selectedMathNumOption == 1){
+                                selectedMathNumOption = -1;
+                        }else{
+                                selectedMathNumOption -= 1;
+                        }
+                        selectOption("mathNum", selectedMathNumOption);
+                }else if(isVisible(document.getElementById("mathPrb"))){
+                        if(selectedMathPrbOption == -1){
+                                selectedMathPrbOption = 3;
+                        }else if(selectedMathPrbOption == 1){
+                                selectedMathPrbOption = -1;
+                        }else{
+                                selectedMathPrbOption -= 1;
+                        }
+                        selectOption("mathPrb", selectedMathPrbOption);
+                }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                let matrixLetter = document.getElementById("matrixName").innerHTML.substring(document.getElementById("matrixName").innerHTML.indexOf("[") + 1, document.getElementById("matrixName").innerHTML.indexOf("]"));
+                let matrices = ["A", "B", "C", "D", "E", "F", "G", "H","I", "J"];
+                let matricesVals = [matrixA, matrixB,matrixC,matrixD,matrixE,matrixF,matrixG,matrixH,matrixI,matrixJ];
+                let matrixArr = matricesVals[matrices.indexOf(matrixLetter)];
+                if(inputFocusInd == -1){
+                        if(matrixSelectInd[0] == 1){
+                                document.getElementById("matrixRowsInput").style.backgroundColor = "transparent";
+                                document.getElementById("matrixColsInput").style.backgroundColor = "#DFAFB1";
+                                inputFocusInd = 2;
+                                matrixSelectInd = [-1, -1];
+                                highlightMatrixCell();
+                                document.getElementById("matrixEditInput").value = "";
+                                displayInput(matrixArr[0].length, "matrixEditInput");
+                                document.getElementById("beforeMatrixInput").innerHTML = "num cols: ";
+                                refocusInput("matrixEditInput");
+                        }else{
+                                matrixSelectInd[0] -= 1;
+                                highlightMatrixCell();
+                                document.getElementById("matrixEditInput").value = "";
+                                displayInput(matrixArr[matrixSelectInd[0]-1][matrixSelectInd[1]-1], "matrixEditInput");
+                                document.getElementById("beforeMatrixInput").innerHTML = "[" + matrixSelectInd[0] + ", " + matrixSelectInd[1] + "]: ";
+                                refocusInput("matrixEditInput");
+                        }
+                }
+                //matrixSelectInd
         }
 }
 
@@ -2128,11 +3261,7 @@ function leftBtn(){
                         refocusInput("userInput");
                 }
         }else if(isVisible(document.getElementById("statDiv"))){
-                if(isVisible(document.getElementById("statEdit"))){
-                        return;
-                }else if(isVisible(document.getElementById("statCalc"))){
-                        statEditBtn();
-                }else if(isVisible(document.getElementById("statEditEditDiv"))){
+                if(isVisible(document.getElementById("statEditEditDiv"))){
                         if(selectedListCell[0] > 1){
                                 let nextList = document.getElementsByClassName("listTable instance" + (selectedListCell[0] - 1))[0].children;
                                 let prevSelect = document.getElementsByClassName("listTableEntry list" + selectedListCell[0] + " instance" + selectedListCell[1])[0];
@@ -2167,6 +3296,57 @@ function leftBtn(){
                 }else if(isVisible(document.getElementById("matrixEdit"))){
                         matrixMathBtn();
                 }
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        return;
+                }else if(isVisible(document.getElementById("mathNum"))){
+                        mathMathBtn();
+                }else if(isVisible(document.getElementById("mathPrb"))){
+                        mathNumBtn();
+                }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                let matrixLetter = document.getElementById("matrixName").innerHTML.substring(document.getElementById("matrixName").innerHTML.indexOf("[") + 1, document.getElementById("matrixName").innerHTML.indexOf("]"));
+                let matrices = ["A", "B", "C", "D", "E", "F", "G", "H","I", "J"];
+                let matricesVals = [matrixA, matrixB,matrixC,matrixD,matrixE,matrixF,matrixG,matrixH,matrixI,matrixJ];
+                let matrixArr = matricesVals[matrices.indexOf(matrixLetter)];
+                if(inputFocusInd == 1){
+                        //do nothing
+                        refocusInput("matrixEditInput");
+                }
+                else if(inputFocusInd == 2){
+                        inputFocusInd = 1;
+                        document.getElementById("matrixRowsInput").style.backgroundColor = "#DFAFB1";
+                        document.getElementById("matrixColsInput").style.backgroundColor = "transparent";
+                        document.getElementById("matrixEditInput").value = "";
+                        displayInput(matrixArr.length, "matrixEditInput");
+                        document.getElementById("beforeMatrixInput").innerHTML = "num rows: ";
+                        refocusInput("matrixEditInput");
+                }else if(inputFocusInd == -1){
+                        if(matrixSelectInd[0] == 1 && matrixSelectInd[1] == 1){
+                                document.getElementById("matrixRowsInput").style.backgroundColor = "transparent";
+                                document.getElementById("matrixColsInput").style.backgroundColor = "#DFAFB1";
+                                inputFocusInd = 2;
+                                matrixSelectInd = [-1, -1];
+                                highlightMatrixCell();
+                                document.getElementById("matrixEditInput").value = "";
+                                displayInput(matrixArr[0].length, "matrixEditInput");
+                                document.getElementById("beforeMatrixInput").innerHTML = "num cols: ";
+                                refocusInput("matrixEditInput");
+                        }else{
+                                if(matrixSelectInd[1] == 1){
+                                        //do nothing
+                                        refocusInput("matrixEditInput");
+                                }else{
+                                        matrixSelectInd[1] -= 1;
+                                        highlightMatrixCell();
+                                        document.getElementById("matrixEditInput").value = "";
+                                        displayInput(matrixArr[matrixSelectInd[0]-1][matrixSelectInd[1]-1], "matrixEditInput");
+                                        document.getElementById("beforeMatrixInput").innerHTML = "[" + matrixSelectInd[0] + ", " + matrixSelectInd[1] + "]: ";
+                                        refocusInput("matrixEditInput");
+                                }
+                        }
+                }
+                //matrixSelectInd
         }
 }
 
@@ -2182,11 +3362,7 @@ function rightBtn(){
                         refocusInput("userInput");
                 }
         }else if(isVisible(document.getElementById("statDiv"))){
-                if(isVisible(document.getElementById("statEdit"))){
-                        statCalcBtn();
-                }else if(isVisible(document.getElementById("statCalc"))){
-                        return;
-                }else if(isVisible(document.getElementById("statEditEditDiv"))){
+                if(isVisible(document.getElementById("statEditEditDiv"))){
                         if(selectedListCell[0] < 6){
                                 let nextList = document.getElementsByClassName("listTable instance" + (selectedListCell[0] + 1))[0].children;
                                 let prevSelect = document.getElementsByClassName("listTableEntry list" + selectedListCell[0] + " instance" + selectedListCell[1])[0];
@@ -2221,19 +3397,65 @@ function rightBtn(){
                 }else if(isVisible(document.getElementById("matrixEdit"))){
                         return;
                 }
+        }else if(isVisible(document.getElementById("mathDiv"))){
+                if(isVisible(document.getElementById("mathMath"))){
+                        mathNumBtn();
+                }else if(isVisible(document.getElementById("mathNum"))){
+                        mathPrbBtn();
+                }else if(isVisible(document.getElementById("mathPrb"))){
+                        return;
+                }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                let matrixLetter = document.getElementById("matrixName").innerHTML.substring(document.getElementById("matrixName").innerHTML.indexOf("[") + 1, document.getElementById("matrixName").innerHTML.indexOf("]"));
+                let matrices = ["A", "B", "C", "D", "E", "F", "G", "H","I", "J"];
+                let matricesVals = [matrixA, matrixB,matrixC,matrixD,matrixE,matrixF,matrixG,matrixH,matrixI,matrixJ];
+                let matrixArr = matricesVals[matrices.indexOf(matrixLetter)];
+                if(inputFocusInd == 1){
+                        document.getElementById("matrixRowsInput").style.backgroundColor = "transparent";
+                        document.getElementById("matrixColsInput").style.backgroundColor = "#DFAFB1";
+                        inputFocusInd = 2;
+                        document.getElementById("matrixEditInput").value = "";
+                        displayInput(matrixArr[0].length, "matrixEditInput");
+                        document.getElementById("beforeMatrixInput").innerHTML = "num cols: ";
+                        refocusInput("matrixEditInput");
+                }else if(inputFocusInd == 2){
+                        inputFocusInd = -1;
+                        matrixSelectInd = [1, 1];
+                        document.getElementById("matrixRowsInput").style.backgroundColor = "transparent";
+                        document.getElementById("matrixColsInput").style.backgroundColor = "transparent";
+                        highlightMatrixCell();
+                        document.getElementById("matrixEditInput").value = "";
+                        displayInput(matrixArr[matrixSelectInd[0]-1][matrixSelectInd[1]-1], "matrixEditInput");
+                        document.getElementById("beforeMatrixInput").innerHTML = "[1, 1]: ";
+                        refocusInput("matrixEditInput");
+                        //document.getElementsByClassName("matrixRows instance" + matrixSelectInd[0])[0].backgroundColor = "blue";
+                        //document.getElementsByClassName("matrixRows instance" + matrixSelectInd[0])[0].children[matrixSelectInd[1]-1].backgroundColor =  "#DFAFB1";
+                }else if(inputFocusInd == -1){
+                        if(matrixSelectInd[1] == matrixArr[0].length){
+                                //do nothing
+                                refocusInput("matrixEditInput");
+                        }else{
+                                matrixSelectInd[1] += 1;
+                                highlightMatrixCell();
+                                document.getElementById("matrixEditInput").value = "";
+                                displayInput(matrixArr[matrixSelectInd[0]-1][matrixSelectInd[1]-1], "matrixEditInput");
+                                document.getElementById("beforeMatrixInput").innerHTML = "[" + matrixSelectInd[0] + ", " + matrixSelectInd[1] + "]: ";
+                                refocusInput("matrixEditInput");
+                        }
+                }
+                //matrixSelectInd
         }
 }
 
-function statEditBtn(){
-        document.getElementById("statEditEditDiv").style.display = "none";
-        document.getElementById("statEdit").style.display = "block";
-        selectedStatEditOption = -1;
-        document.getElementById("statCalc").style.display = "none";
-
-        document.getElementById("calcOption").style.backgroundColor = "transparent";
-        document.getElementById("calcOption").style.color = "black";
-        document.getElementById("editOption").style.backgroundColor = "#DFAFB1";
-        document.getElementById("editOption").style.color = "white";
+function highlightMatrixCell(){
+        let allCells = document.getElementsByClassName("matrixCells");
+        for(let i = 0; i < allCells.length; i++){
+                allCells[i].style.backgroundColor = "transparent";
+        }
+        if(matrixSelectInd[0] != -1 && matrixSelectInd[1] != -1){
+                let cell = document.getElementsByClassName("matrixCells row" + matrixSelectInd[0] + " instance" + matrixSelectInd[1])[0];
+                cell.style.backgroundColor = "#DFAFB1";   
+        }
 }
 
 function statCalcBtn(){
@@ -2378,26 +3600,56 @@ function testTestChoose(val){
         if(val == 1){
                 showScreen("normDiv");
                 displayInput(" = ", "userInput");
+                currFormatted += ' = ';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '=';
                 refocusInput("userInput");
         }else if(val == 2){
                 showScreen("normDiv");
                 displayInput(" ≠ ", "userInput");
+                currFormatted += ' != ';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '!=';
                 refocusInput("userInput");
         }else if(val == 3){
                 showScreen("normDiv");
                 displayInput(" > ", "userInput");
+                currFormatted += '>';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '>';
                 refocusInput("userInput");
         }else if(val == 4){
                 showScreen("normDiv");
                 displayInput(" ≥ ", "userInput");
+                currFormatted += ' \\geq ';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '>=';
                 refocusInput("userInput");
         }else if(val == 5){
                 showScreen("normDiv");
                 displayInput(" < ", "userInput");
+                currFormatted += '<';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '<';
                 refocusInput("userInput");
         }else if(val == 6){
                 showScreen("normDiv");
                 displayInput(" ≤ ", "userInput");
+                currFormatted += ' \\leq ';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '<=';
                 refocusInput("userInput");
         }
 }
@@ -2406,22 +3658,47 @@ function testLogicChoose(val){
         if(val == 1){
                 showScreen("normDiv");
                 displayInput(" % ", "userInput");
+                currFormatted += ' \\% ';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '%';
                 refocusInput("userInput");
         }else if(val == 2){
                 showScreen("normDiv");
                 displayInput(" and ", "userInput");
+                currFormatted += '\\ and\\ ';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += ' and ';
                 refocusInput("userInput");
         }else if(val == 3){
                 showScreen("normDiv");
                 displayInput(" or ", "userInput");
+                currFormatted += '\\ or\\ ';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += ' or ';
                 refocusInput("userInput");
         }else if(val == 4){
                 showScreen("normDiv");
                 displayInput(" xor ", "userInput");
+                currFormatted += '\\ xor\\ ';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += ' xor ';
                 refocusInput("userInput");
         }else if(val == 5){
                 showScreen("normDiv");
-                displayInput(" not(", "userInput");
+                displayInput("not(", "userInput");
+                currFormatted += 'not(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'not(';
                 refocusInput("userInput");
         }
 }
@@ -2435,14 +3712,29 @@ function statEditChoose(v){
         }else if(v == 2){
                 showScreen("normDiv");
                 displayInput("sortA(", "userInput");
+                currFormatted += 'sortA(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'sortA(';
                 refocusInput("userInput");
         }else if(v == 3){
                 showScreen("normDiv");
                 displayInput("sortD(", "userInput");
+                currFormatted += 'sortD(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'sortD(';
                 refocusInput("userInput");
         }else if(v == 4){
                 showScreen("normDiv");
                 displayInput("clrList(", "userInput");
+                currFormatted += 'clrList(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'clrList(';
                 refocusInput("userInput");
         }
 }
@@ -2452,6 +3744,11 @@ function angleChoose(v){
         if(v == 1){
                 showScreen("normDiv");
                 displayInput("°", "userInput");
+                currFormatted += '^{\\circ}';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '°';
                 refocusInput("userInput"); 
         }
 }
@@ -2459,15 +3756,58 @@ function angleChoose(v){
 function listNamesChoose(val){
         showScreen("normDiv");
         displayInput("L" + val, "userInput");
+        currFormatted += 'L' + val;
+        currFormatted = parseFormatted(currFormatted);
+        document.getElementById("formattedEq").innerHTML = currFormatted;
+        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+        currInputOrig += 'L' + val;
         refocusInput("userInput");
 }
 
 function matrixNamesChoose(val){
         let matrices = ["A", "B", "C", "D", "E", "F", "G", "H","I", "J"];
+        let matricesVals = [matrixA, matrixB,matrixC,matrixD,matrixE,matrixF,matrixG,matrixH,matrixI,matrixJ];
         showScreen("normDiv");
         displayInput("[" + matrices[val - 1] + "]", "userInput");
+        currFormatted += "[" + matrices[val - 1] + "]";
+        currFormatted = parseFormatted(currFormatted);
+        document.getElementById("formattedEq").innerHTML = currFormatted;
+        katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+        currInputOrig += "[" + matrices[val - 1] + "]";
         refocusInput("userInput");
 }
+
+function matrixEditChoose(val){
+        let matrices = ["A", "B", "C", "D", "E", "F", "G", "H","I", "J"];
+        let matricesVals = [matrixA, matrixB,matrixC,matrixD,matrixE,matrixF,matrixG,matrixH,matrixI,matrixJ];
+
+        showScreen("matrixEditorDiv");
+        refocusInput("matrixEditInput");
+
+        document.getElementById("matrixName").innerHTML = "Matrix[" + matrices[val-1] + "]";
+        document.getElementsByClassName("matrixDisplay")[0].innerHTML = matrixToTable(matricesVals[val-1]);
+        document.getElementById("matrixRowsInput").innerHTML = matricesVals[val-1].length;
+        document.getElementById("matrixColsInput").innerHTML = matricesVals[val-1][0].length;
+        document.getElementById("matrixEditInput").value = "";
+        displayInput(matricesVals[val-1].length, "matrixEditInput");
+}
+
+function matrixToTable(arr){
+        let numRows = arr.length;
+        let numCols = arr[0].length;
+        let tableStr = "<table class='matrixTable'>"
+        for(let i = 0; i < numRows; i++){
+                let rowStr = "<tr class='matrixRows " + "instance" + (i+1) + "'>";
+                for(let j = 0; j < numCols; j++){
+                        rowStr += "<th class='matrixCells row" + (i+1) + " instance" + (j+1) + "'>" + arr[i][j] + "</th>"
+                }
+                rowStr += "</tr>"
+                tableStr += rowStr;
+        }
+        tableStr += "</table>";
+        return tableStr;
+}
+
 
 function matrixMathChoose(v){
         v = parseInt(v);
@@ -2502,6 +3842,153 @@ function matrixMathChoose(v){
         }
 }
 
+function mathMathChoose(v){
+        v = parseInt(v);
+        if(v == 1){
+                showScreen("normDiv");
+                displayInput(">Frac", "userInput");
+                currFormatted += '\\ >Frac';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '>Frac';
+                refocusInput("userInput");
+        }else if(v == 2){
+                showScreen("normDiv");
+                displayInput(">Dec", "userInput");
+                currFormatted += '\\ >Dec';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '>Dec';
+                refocusInput("userInput");
+        }else if(v == 3){
+                showScreen("normDiv");
+                displayInput("^(3)", "userInput");
+                currFormatted += '^(3)';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '^(3)';
+                refocusInput("userInput");
+        }else if(v == 4){
+                showScreen("normDiv");
+                displayInput("∛(", "userInput");
+                currFormatted += '∛(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'cbrt(';
+                refocusInput("userInput");
+        }else if(v == 5){
+                showScreen("normDiv");
+                displayInput("ⁿ√(", "userInput");
+                currFormatted += 'ⁿ√(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'nthRoot(';
+                refocusInput("userInput");
+        }else if(v == 6){
+                showScreen("normDiv");
+                displayInput("nDeriv(", "userInput");
+                currFormatted += 'nDeriv(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'nDeriv(';
+                refocusInput("userInput");
+        }else if(v == 7){
+                showScreen("normDiv");
+                displayInput("fnInt(", "userInput");
+                currFormatted += 'fnInt(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'integrate(';
+                refocusInput("userInput");
+        }
+        else if(v == 8){
+                showScreen("normDiv");
+                displayInput("logBASE(", "userInput");
+                currFormatted += 'logBASE(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'logBASE(';
+                refocusInput("userInput");
+        }
+}
+
+function mathNumChoose(v){
+        v = parseInt(v);
+        if(v == 1){
+                showScreen("normDiv");
+                displayInput("abs(", "userInput");
+                currFormatted += 'abs(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'abs(';
+                refocusInput("userInput");
+        }else if(v == 2){
+                showScreen("normDiv");
+                displayInput("round(", "userInput");
+                currFormatted += 'round(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'round(';
+                refocusInput("userInput");
+        }else if(v == 3){
+                showScreen("normDiv");
+                displayInput("int(", "userInput");
+                currFormatted += 'int(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'int(';
+                refocusInput("userInput");
+        }else if(v == 4){
+                showScreen("normDiv");
+                displayInput("frac", "userInput");
+                //get rid or do later
+                refocusInput("userInput");
+        }
+}
+
+function mathPrbChoose(v){
+        v = parseInt(v);
+        if(v == 1){
+                showScreen("normDiv");
+                displayInput("nPr(", "userInput");
+                currFormatted += 'nPr(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'permutations(';
+                refocusInput("userInput");
+        }else if(v == 2){
+                showScreen("normDiv");
+                displayInput("nCr(", "userInput");
+                currFormatted += 'nCr(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'combinations(';
+                refocusInput("userInput");
+        }else if(v == 3){
+                showScreen("normDiv");
+                displayInput("!", "userInput");
+                currFormatted += '!';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += '!';
+                refocusInput("userInput");
+        }
+}
+
 function statBtn(){
         if(secondOn){
                 listNamesBtn();
@@ -2512,7 +3999,6 @@ function statBtn(){
                 refocusInput("userInput");
                 refocusInput("currValInput");
         }else{
-                statEditBtn();
                 showScreen("statDiv");
         }
 }
@@ -2533,34 +4019,74 @@ function listMathChoose(val){
         if(val == 1){
                 showScreen("normDiv");
                 displayInput("min(", "userInput");
+                currFormatted += 'min(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'min(';
                 refocusInput("userInput");
         }else if(val == 2){
                 showScreen("normDiv");
                 displayInput("max(", "userInput");
+                currFormatted += 'max(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'max(';
                 refocusInput("userInput");
         }else if(val == 3){
                 showScreen("normDiv");
                 displayInput("mean(", "userInput");
+                currFormatted += 'mean(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'mean(';
                 refocusInput("userInput");
         }else if(val == 4){
                 showScreen("normDiv");
                 displayInput("median(", "userInput");
+                currFormatted += 'median(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'median(';
                 refocusInput("userInput");
         }else if(val == 5){
                 showScreen("normDiv");
                 displayInput("sum(", "userInput");
+                currFormatted += 'sum(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'sum(';
                 refocusInput("userInput");
         }else if(val == 6){
                 showScreen("normDiv");
                 displayInput("prod(", "userInput");
+                currFormatted += 'prod(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'prod(';
                 refocusInput("userInput");
         }else if(val == 7){
                 showScreen("normDiv");
                 displayInput("stdDev(", "userInput");
+                currFormatted += 'stdDev(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'stdDev(';
                 refocusInput("userInput");
         }else if(val == 8){
                 showScreen("normDiv");
                 displayInput("variance(", "userInput");
+                currFormatted += 'variance(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'variance(';
                 refocusInput("userInput");
         }
 }
