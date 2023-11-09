@@ -34,7 +34,6 @@
                                         <p id="formattedEq"></p>
                                         <input type="text" id="userInput" autofocus>
                                         <i></i>
-                                        
                                 </div>
                         </div>
                         <div class="screenDiv" id="modeDiv">
@@ -156,7 +155,7 @@
                                         <button class="contentOptions" value = "4" onclick="matrixMathChoose(value)">4: fill&#40;</button>
                                         <button class="contentOptions" value = "5" onclick="matrixMathChoose(value)">5: identity&#40;</button>
                                         <button class="contentOptions" value = "6" onclick="matrixMathChoose(value)">6: randM&#40;</button>
-                                        <button class="contentOptions" value = "7" onclick="matrixMathChoose(value)">7: rref&#40;</button>
+                                        <button class="contentOptions" value = "7" onclick="matrixMathChoose(value)">7: augment&#40;</button>
                                 </div>
                                 <div class="menuContentDiv" id="matrixEdit">
                                         <button class="contentOptions" value = "1" onclick="matrixEditChoose(value)">1: [A]</button>
@@ -184,6 +183,41 @@
                                 </div>
                                 <div class="enterVals">
                                         <span id="beforeMatrixInput">num rows: </span><input type="text" id="matrixEditInput" value="1" autofocus>
+                                </div>
+                        </div>
+                        <div class="screenDiv" id="yEqDiv">
+                                <p class="menuTitle">Graph Equations</p>
+                                <div class="graphEqScroll">
+                                        <div class="graphEqDiv">
+                                                <input type="checkbox" id="y1Drawn" class="graphEqCheckboxes"><span class="yEqColor y1"></span><span>\Y₁ = </span><input type="text" id="y1" class="yEqInput" autofocus>
+                                        </div>
+                                        <div class="graphEqDiv">
+                                                <input type="checkbox" id="y2Drawn" class="graphEqCheckboxes"><span class="yEqColor y2"></span><span>\Y₂ = </span><input type="text" id="y2" class="yEqInput" autofocus>
+                                        </div>
+                                        <div class="graphEqDiv">
+                                                <input type="checkbox" id="y3Drawn" class="graphEqCheckboxes"><span class="yEqColor y3"></span><span>\Y₃ = </span><input type="text" id="y3" class="yEqInput" autofocus>
+                                        </div>
+                                        <div class="graphEqDiv">
+                                                <input type="checkbox" id="y4Drawn" class="graphEqCheckboxes"><span class="yEqColor y4"></span><span>\Y₄ = </span><input type="text" id="y4" class="yEqInput" autofocus>
+                                        </div>
+                                        <div class="graphEqDiv">
+                                                <input type="checkbox" id="y5Drawn" class="graphEqCheckboxes"><span class="yEqColor y5"></span><span>\Y₅ = </span><input type="text" id="y5" class="yEqInput" autofocus>
+                                        </div>
+                                        <div class="graphEqDiv">
+                                                <input type="checkbox" id="y6Drawn" class="graphEqCheckboxes"><span class="yEqColor y6"></span><span>\Y₆ = </span><input type="text" id="y6" class="yEqInput" autofocus>
+                                        </div>
+                                        <div class="graphEqDiv">
+                                                <input type="checkbox" id="y7Drawn" class="graphEqCheckboxes"><span class="yEqColor y7"></span><span>\Y₇ = </span><input type="text" id="y7" class="yEqInput" autofocus>
+                                        </div>
+                                        <div class="graphEqDiv">
+                                                <input type="checkbox" id="y8Drawn" class="graphEqCheckboxes"><span class="yEqColor y8"></span><span>\Y₈ = </span><input type="text" id="y8" class="yEqInput" autofocus>
+                                        </div>
+                                        <div class="graphEqDiv">
+                                                <input type="checkbox" id="y9Drawn" class="graphEqCheckboxes"><span class="yEqColor y9"></span><span>\Y₉ = </span><input type="text" id="y9" class="yEqInput" autofocus>
+                                        </div>
+                                        <div class="graphEqDiv">
+                                                <input type="checkbox" id="y10Drawn" class="graphEqCheckboxes"><span class="yEqColor y10"></span><span>\Y₁₀ = </span><input type="text" id="y10" class="yEqInput" autofocus>
+                                        </div>
                                 </div>
                         </div>
                         <div class="screenDiv" id="statDiv">
@@ -270,7 +304,7 @@
                                         <div class = "aboveBtn">
                                                 <p class="secFunc">statplot</p><p class="alphaFunc">f1</p>
                                         </div>
-                                        <button class="bttn white">y=</button>
+                                        <button class="bttn white" onclick="yEqBtn()">y=</button>
                                 </div>
                                 <div class="btnDiv" id= "windowBtnDiv">
                                         <div class = "aboveBtn">

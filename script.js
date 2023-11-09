@@ -50,17 +50,86 @@ let currInputOrig = "";
 let currFormatted = "";
 let tester = 0;
 
+let currY1Orig = "";
+let currY2Orig = "";
+let currY3Orig = "";
+let currY4Orig = "";
+let currY5Orig = "";
+let currY6Orig = "";
+let currY7Orig = "";
+let currY8Orig = "";
+let currY9Orig = "";
+let currY10Orig = "";
+
 var input = document.getElementById("userInput");
 input.select();
 
 scrollToBottom();
+
+let focusedEq;
+
+document.addEventListener("DOMContentLoaded", function() {
+        let focusedInput = null;
+      
+        // Add focus event listeners to each text input
+        const y1 = document.getElementById("y1");
+        const y2 = document.getElementById("y2");
+        const y3 = document.getElementById("y3");
+        const y4 = document.getElementById("y4");
+        const y5 = document.getElementById("y5");
+        const y6 = document.getElementById("y6");
+        const y7 = document.getElementById("y7");
+        const y8 = document.getElementById("y8");
+        const y9 = document.getElementById("y9");
+        const y10 = document.getElementById("y10");
+
+        focusedEq = y1;
+      
+        y1.addEventListener("focus", function() {
+          focusedEq = y1;
+        });
+      
+        y2.addEventListener("focus", function() {
+          focusedEq = y2;
+        });
+      
+        y3.addEventListener("focus", function() {
+          focusedEq = y3;
+        });
+
+        y4.addEventListener("focus", function() {
+                focusedEq = y4;
+        });
+
+        y5.addEventListener("focus", function() {
+                focusedEq = y5;
+        });
+
+        y6.addEventListener("focus", function() {
+        focusedEq = y6;
+        });
+        y7.addEventListener("focus", function() {
+        focusedEq = y7;
+        });
+        y8.addEventListener("focus", function() {
+        focusedEq = y8;
+        });
+        y9.addEventListener("focus", function() {
+        focusedEq = y9;
+        });
+        y10.addEventListener("focus", function() {
+        focusedEq = y10;
+        });
+});
 
 
 
 //parse sin, cos, tan, asin, acos, atan, sqrt,log, ln,  10^, e^
 function addPrevCalc(calc, result){
         numPrev++;
+        result = filterAns(result);
         document.getElementsByClassName("prevCalcDiv")[0].innerHTML += "<div class='calcResDiv instance" + numPrev + "'><p class='calc'>" + calc + "</p> <p class='prevResult'>" + result + "</p></div>";
+        //katex.render(result, document.getElementById("prevCalcDiv"), {throwOnError: false});
         scrollToBottom();
         allPrevCalc.push(calc);
         allPrevAns.push(result);
@@ -139,6 +208,9 @@ function showScreen(showId){
                 document.getElementById("angleDiv").style.display = "none";
         }if(showId != "mathDiv"){
                 document.getElementById("mathDiv").style.display = "none";
+        }
+        if(showId != "yEqDiv"){
+                document.getElementById("yEqDiv").style.display = "none";
         }
         if(showId != "matrixEditorDiv"){
                 let matrixLetter = document.getElementById("matrixName").innerHTML.substring(document.getElementById("matrixName").innerHTML.indexOf("[") + 1, document.getElementById("matrixName").innerHTML.indexOf("]"));
@@ -236,7 +308,9 @@ decToFrac = dec =>
     )
   ).sort((a, b) => a[3] - b[3])[0].slice(0, 2)
 
+//alert(math.evaluate("size([[0], [0]])"));
 function solve(eq){
+
         let ans = "error";
         if(eq.includes("→")){
                 if(allVars.includes(eq.substr(0, eq.indexOf("→")).trim())){
@@ -260,6 +334,28 @@ function solve(eq){
                 clearList(listNum)
                 return "[]";
         }
+
+        if(eq.includes("fill(") && parenIsClosed(eq, eq.indexOf("fill(") + 4)){
+                
+                let matrices = ["A", "B", "C", "D", "E", "F", "G", "H","I", "J"];
+                let matrixVals = [matrixA, matrixB, matrixC, matrixD, matrixE, matrixF, matrixG, matrixH, matrixI, matrixJ];
+
+                
+                let beginInd = eq.indexOf("fill(") + 4;
+                let endInd = findClosedParen(eq, beginInd);
+                let innerContent = eq.substring(beginInd + 1, endInd).split(",");
+                if(innerContent[1].length == 3 && innerContent[1][0] == "[" && innerContent[1][2] == "]" && matrices.includes(innerContent[1][1])){
+                        let ind = matrices.indexOf(innerContent[1][1]);
+                        for(let i = 0; i < matrixVals[ind].length; i++){
+                                for(let j = 0; j < matrixVals[ind][i].length; j++){
+                                        matrixVals[ind][i][j] = innerContent[0];
+                                }
+                        }
+                }
+                //if(innerContent)
+                eq = eq.substr(0, eq.indexOf("fill(")) + innerContent[1] + eq.substr(endInd + 1, eq.length);
+        }
+
         eq = replaceAllSortA(eq);
         eq = replaceAllSortD(eq);
         eq = parseEq(eq);
@@ -286,15 +382,92 @@ function solve(eq){
                 }
                 return ans;
         }
+        /*if(eq.includes("fill(") && parenIsClosed(eq, eq.indexOf("fill(") + 5)){
+                alert(eq);
+        }*/
+        if(eq.includes("randM(") && parenIsClosed(eq, eq.indexOf("randM(") + 5)){
+                let beginInd = eq.indexOf("randM(") + 5;
+                let endInd = findClosedParen(eq, beginInd);
+                let innerContent = eq.substring(beginInd + 1, endInd).split(",");
+                let rows = parseInt(innerContent[0].trim());
+                let cols = parseInt(innerContent[1].trim());
+
+                let retArr = [];
+
+                for(let i = 0; i < rows; i++){
+                        let rowArr = [];
+                        for(let j = 0; j < cols; j++){
+                                let randNum = Math.floor(Math.random() * 10);
+                                let isNeg = Math.floor(Math.random() * 2);
+                                if(isNeg == 1){
+                                        randNum = randNum * -1;
+                                }
+                                rowArr.push(randNum);
+                        }
+                        retArr.push(rowArr);
+                }
+                return retArr;
+                //eq = eq.substr(0, eq.indexOf("randM(")) + retArr + eq.substr(endInd + 1, eq.length);
+                //alert(eq);
+        }
+        if(eq.includes("augment(") && parenIsClosed(eq, eq.indexOf("augment(") + 7)){
+                let beginInd = eq.indexOf("augment(") + 7;
+                let endInd = findClosedParen(eq, beginInd);
+                let innerContent = eq.substring(beginInd + 1, endInd);
+
+                if(bracketIsClosed(innerContent, 0)){
+                        let endBrack = findClosedBracket(innerContent, 0);
+                        let first = innerContent.substr(0, endBrack + 1);
+                        let second = innerContent.substr(endBrack + 2, innerContent.length);
+                        first = JSON.parse(first);
+                        
+                        second = JSON.parse(second);
+                        //alert(first);
+                        //alert(second);
+
+                        if(first.length != second.length){
+                                return "error";
+                        }
+                        let retArr = [];
+                        for(let i = 0; i < first.length; i++){
+                                let rowArr = [];
+                                let firstRow = first[i];
+                                let secondRow = second[i];
+                                for(let j = 0; j < firstRow.length; j++){
+                                        rowArr.push(firstRow[j]);
+                                }
+                                for(let j = 0; j < secondRow.length; j++){
+                                        rowArr.push(secondRow[j]);
+                                }
+                                retArr.push(rowArr);
+                        }
+                        return retArr;
+                }
+                
+                //eq = eq.substr(0, eq.indexOf("randM(")) + retArr + eq.substr(endInd + 1, eq.length);
+                //alert(eq);
+        }
 
         try{
                 ans = math.evaluate(eq);
+                //alert(ans);
                 if(parseFloat(ans) < math.pow(10, -15) && parseFloat(ans) > -1*math.pow(10, -15)){
                         ans = "0";
                 }
         }catch(error){
         }
+        
         return ans;
+}
+
+function separateArrs(str){
+        if(str[0] != "["){
+                for(let i = 1; i < str.length; i++){
+
+                }
+        }else{
+                return false;
+        }
 }
 
 function clears(id){
@@ -323,9 +496,12 @@ function enterBtn(){
                         refocusInput("userInput");
                 }else{
                         //alert(currInputOrig);
+                        //let ans = JSON.stringify(solve(currInputOrig));
                         let ans = solve(currInputOrig);
                         addPrevCalc(currFormatted, ans);
                         katex.render(currFormatted, document.getElementsByClassName("calcResDiv instance" + numPrev)[0].children[0], {throwOnError: false});
+                        //document.getElementsByClassName("calcResDiv instance" + numPrev)[0].children[1].innerHTML = "hello";
+                        katex.render(filterAns(ans), document.getElementsByClassName("calcResDiv instance" + numPrev)[0].children[1], {throwOnError: false});
                         currInputOrig = "";
                         currFormatted = "";
                         clears("userInput");
@@ -466,6 +642,54 @@ function enterBtn(){
                         refocusInput("matrixEditInput");
                 }
         }
+}
+
+function filterAns(eq){
+        //alert(eq.toString());
+        //alert(str(eq));
+        if(typeof eq == 'object'){
+                return formatMatrix(eq);
+        }
+        return eq.toString();
+        /*eqtemp = eq;
+        let matrices = ["A", "B", "C", "D", "E", "F", "G", "H","I", "J"];
+        let matrixVals = [matrixA, matrixB, matrixC, matrixD, ,atrixE, matrixF, matrixG, matrixH, matrixI, matrixJ];
+        for(let i = 0; i < matrices.length; i++){
+                if(eqtemp.includes("[" + matrices[i] + "]")){
+                        eqtemp.replaceAll("[" + matrices[i] + "]", formatMatrix(matrixVals[i]));
+                }
+        }
+        return eqtemp;*/
+        //if(eqtemp.includes("[A]"))
+}
+
+function formatMatrix(arr){
+        if(arr._data != undefined){
+                arr = arr._data;
+                
+        }
+        let formatStr = "\\begin{bmatrix}";
+        /*for(let i = 0; i < arr.length; i++){
+                alert(arr[i]);
+        }*/
+        if(arr[0].length != undefined){
+                for(let i = 0; i < arr.length; i++){
+                        let rowStr = "";
+                        for(let j = 0; j < arr[i].length; j++){
+                                rowStr += arr[i][j]
+                                if(j != arr[i].length - 1){
+                                        rowStr += " & ";
+                                }
+                        }
+                        if(i != arr.length - 1){
+                                rowStr += "\\\\";
+                        }
+                        formatStr += rowStr;
+                }
+                formatStr += "\\end{bmatrix}"
+                return formatStr;
+        }
+        return arr.toString();
 }
 
 function updateMatrixCols(letter, arr, newCols){
@@ -775,6 +999,7 @@ function parseEq(eq){
                 ret = ret.replaceAll("[J]", matStr);
         }
 
+
         for(let i = 0; i < allVars.length; i++){
                 if(ret.includes(allVars[i])){
                         ret = ret.replaceAll(allVars[i], varStorage[i]);
@@ -805,6 +1030,23 @@ function parseEq(eq){
                         ret = ret.substring(0, ret.indexOf("nDeriv(")) + expr + ret.substring(endInd + 1, ret.length);
                 }
         }
+
+        if(ret.includes(")^T")){
+                let beforeStr = ret.substr(0, ret.indexOf(")^T"));
+                let beginInd = -1;
+                for(let i = 0; i < beforeStr.length; i++){
+                        if(beforeStr[i] == "("){
+                                beginInd = i;
+                        }
+                }
+                if(beginInd != -1){
+                        let endInd = ret.indexOf(")^T");
+                        let innerContent = ret.substring(beginInd + 1, endInd);
+                        ret = ret.substr(0, beginInd) + "transpose(" + innerContent + ")" + ret.substr(endInd + 3, ret.length);
+                }
+        }
+        ret = ret.replaceAll("dim(", "size(");
+        
         return ret;
 }
 
@@ -812,7 +1054,7 @@ function parseEq(eq){
 expr = math.string(expr);
 expr = expr.replaceAll("x", "2");
 alert(expr);*/
-
+//alert(math.evaluate("size([[0, 0], [0, 0]])"));
 
 const updateStrs = function(e){//ln, log, logBASE
         let currInput = e.target.value;
@@ -952,9 +1194,18 @@ function parseFormatted(eq){
                         eqtemp = eqtemp.substring(0, eq.indexOf("nCr(")) + "_{" + vals[0] + "}C_{" + vals[1] + "}" + eq.substring(endInd + 1, eq.length);
                 }
         }
-        
-        
 
+        if(eqtemp.includes("nPr(") && parenIsClosed(eqtemp, eqtemp.indexOf("nPr(") + 3)){
+                let beginInd = eqtemp.indexOf("nPr(") + 3;
+                let endInd = findClosedParen(eqtemp, beginInd);
+                let innerContent = eqtemp.substring(beginInd + 1, endInd);
+                //exp, var, lower, upper
+                let vals = innerContent.split(",");
+                if(vals.length == 2){
+                        eqtemp = eqtemp.substring(0, eq.indexOf("nPr(")) + "_{" + vals[0] + "}P_{" + vals[1] + "}" + eq.substring(endInd + 1, eq.length);
+                }
+        }
+        
         return eqtemp;
 }
 
@@ -963,6 +1214,12 @@ document.getElementById("userInput").addEventListener("propertychange", updateSt
 
 function parenIsClosed(str, pos){
         if(findClosedParen(str, pos) == -1){
+                return false;
+        }else return true;
+}
+
+function bracketIsClosed(str, pos){
+        if(findClosedBracket(str, pos) == -1){
                 return false;
         }else return true;
 }
@@ -978,6 +1235,26 @@ function findClosedParen(str, pos) {
             depth++;
             break;
           case ')':
+            if (--depth == 0) {
+              return i;
+            }
+            break;
+          }
+        }
+        return -1;    // No matching closing parenthesis
+}
+
+function findClosedBracket(str, pos) {
+        if (str[pos] != '[') {
+          throw new Error("No '[' at index " + pos);
+        }
+        let depth = 1;
+        for (let i = pos + 1; i < str.length; i++) {
+          switch (str[i]) {
+          case '[':
+            depth++;
+            break;
+          case ']':
             if (--depth == 0) {
               return i;
             }
@@ -1007,6 +1284,8 @@ function clearBtn(){
                         if(isVisible(document.getElementById("statEditEditDiv"))){
                                 clears("currValInput");
                         }
+                }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                        clears("matrixEditInput");
                 }
         }
 }
@@ -1041,6 +1320,8 @@ function delBtn(){
                         if(isVisible(document.getElementById("statEditEditDiv"))){
                                 deletes("currValInput");
                         }
+                }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                        deletes("matrixEditInput");
                 }
         }
 }
@@ -1393,6 +1674,24 @@ function divisionBtn(){
                         }
                         refocusInput("currValInput");
                 }
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("e", displayTo);
+                        origArr[num - 1] += 'e';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("M", displayTo);
+                        origArr[num - 1] += 'M';
+                        toggleAlpha();
+                }else{
+                        displayInput(' / ', displayTo);
+                        origArr[num - 1] += ' / ';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -1532,6 +1831,37 @@ function periodBtn(){
                         }
                         refocusInput("currValInput");
                 }
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("i", displayTo);
+                        origArr[num - 1] += 'i';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput(":", displayTo);
+                        origArr[num - 1] += ':';
+                        toggleAlpha();
+                }else{
+                        displayInput('.', displayTo);
+                        origArr[num - 1] += '.';
+                }
+                refocusInput(displayTo);
+        }
+}
+
+function yEqBtn(){
+        if(secondOn){
+                toggle2nd();
+        }else{
+                if(alphaOn){
+                        toggleAlpha();
+                }else{
+                        showScreen("yEqDiv");
+                        return;
+                }
         }
 }
 
@@ -1576,6 +1906,24 @@ function negBtn(){
                         }
                         refocusInput("currValInput");
                 }
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("ans", displayTo);
+                        origArr[num - 1] += 'ans';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("?", displayTo);
+                        origArr[num - 1] += '?';
+                        toggleAlpha();
+                }else{
+                        displayInput('-', displayTo);
+                        origArr[num - 1] += '-';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -1612,6 +1960,22 @@ function addBtn(){
                         }
                         refocusInput("currValInput");
                 }
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput('"', displayTo);
+                        origArr[num - 1] += '"';
+                        toggleAlpha();
+                }else{
+                        displayInput(' + ', displayTo);
+                        origArr[num - 1] += ' + ';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -1660,6 +2024,24 @@ function subBtn(){
                         }
                         refocusInput("currValInput");
                 }
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("]", displayTo);
+                        origArr[num - 1] += ']';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("W", displayTo);
+                        origArr[num - 1] += 'W';
+                        toggleAlpha();
+                }else{
+                        displayInput(' - ', displayTo);
+                        origArr[num - 1] += ' - ';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -1708,6 +2090,24 @@ function multBtn(){
 
                         refocusInput("currValInput");
                 }
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("[", displayTo);
+                        origArr[num - 1] += '[';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("R", displayTo);
+                        origArr[num - 1] += 'R';
+                        toggleAlpha();
+                }else{
+                        displayInput(' × ', displayTo);
+                        origArr[num - 1] += ' * ';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -2079,6 +2479,27 @@ function sevenBtn(){
                                 mathMathChoose(7);
                         }
                 }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                displayInput('7', "matrixEditInput");
+                refocusInput("matrixEditInput");
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("u", displayTo);
+                        origArr[num - 1] += 'u';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("O", displayTo);
+                        origArr[num - 1] += 'O';
+                        toggleAlpha();
+                }else{
+                        displayInput('7', displayTo);
+                        origArr[num - 1] += '7';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -2140,6 +2561,27 @@ function eightBtn(){
                                 mathMathChoose(8);
                         }
                 }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                displayInput('8', "matrixEditInput");
+                refocusInput("matrixEditInput");
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("v", displayTo);
+                        origArr[num - 1] += 'v';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("P", displayTo);
+                        origArr[num - 1] += 'P';
+                        toggleAlpha();
+                }else{
+                        displayInput('8', displayTo);
+                        origArr[num - 1] += '8';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -2182,6 +2624,27 @@ function nineBtn(){
                         }
                         refocusInput("currValInput");
                 }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                displayInput('9', "matrixEditInput");
+                refocusInput("matrixEditInput");
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("w", displayTo);
+                        origArr[num - 1] += 'w';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("Q", displayTo);
+                        origArr[num - 1] += 'Q';
+                        toggleAlpha();
+                }else{
+                        displayInput('9', displayTo);
+                        origArr[num - 1] += '9';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -2289,6 +2752,28 @@ function fourBtn(){
                                 mathNumChoose(4);
                         }
                 }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                displayInput('4', "matrixEditInput");
+                refocusInput("matrixEditInput");
+        }
+        else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("L4", displayTo);
+                        origArr[num - 1] += 'L4';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("T", displayTo);
+                        origArr[num - 1] += 'T';
+                        toggleAlpha();
+                }else{
+                        displayInput('4', displayTo);
+                        origArr[num - 1] += '4';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -2378,6 +2863,27 @@ function fiveBtn(){
                                 mathMathChoose(5);
                         }
                 }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                displayInput('5', "matrixEditInput");
+                refocusInput("matrixEditInput");
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("L5", displayTo);
+                        origArr[num - 1] += 'L5';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("U", displayTo);
+                        origArr[num - 1] += 'U';
+                        toggleAlpha();
+                }else{
+                        displayInput('5', displayTo);
+                        origArr[num - 1] += '5';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -2458,6 +2964,27 @@ function sixBtn(){
                                 mathMathChoose(6);
                         }
                 }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                displayInput('6', "matrixEditInput");
+                refocusInput("matrixEditInput");
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("L6", displayTo);
+                        origArr[num - 1] += 'L6';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("V", displayTo);
+                        origArr[num - 1] += 'V';
+                        toggleAlpha();
+                }else{
+                        displayInput('6', displayTo);
+                        origArr[num - 1] += '6';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -2581,6 +3108,27 @@ function oneBtn(){
                                 mathPrbChoose(1);
                         }
                 }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                displayInput('1', "matrixEditInput");
+                refocusInput("matrixEditInput");
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("L1", displayTo);
+                        origArr[num - 1] += 'L1';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("Y", displayTo);
+                        origArr[num - 1] += 'Y';
+                        toggleAlpha();
+                }else{
+                        displayInput('1', displayTo);
+                        origArr[num - 1] += '1';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -2695,6 +3243,27 @@ function twoBtn(){
                                 mathPrbChoose(2);
                         }
                 }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                displayInput('2', "matrixEditInput");
+                refocusInput("matrixEditInput");
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("L2", displayTo);
+                        origArr[num - 1] += 'L2';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("Z", displayTo);
+                        origArr[num - 1] += 'Z';
+                        toggleAlpha();
+                }else{
+                        displayInput('2', displayTo);
+                        origArr[num - 1] += '2';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -2809,6 +3378,27 @@ function threeBtn(){
                                 mathPrbChoose(3);
                         }
                 }
+        }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                displayInput('3', "matrixEditInput");
+                refocusInput("matrixEditInput");
+        }else if(isVisible(document.getElementById("yEqDiv"))){
+                let displayTo = focusedEq.id;
+                let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                let num = parseInt(displayTo[1]);
+
+                if(secondOn){
+                        displayInput("L3", displayTo);
+                        origArr[num - 1] += 'L3';
+                        toggle2nd();
+                }else if(alphaOn){
+                        displayInput("θ", displayTo);
+                        origArr[num - 1] += 'θ';
+                        toggleAlpha();
+                }else{
+                        displayInput('3', displayTo);
+                        origArr[num - 1] += '3';
+                }
+                refocusInput(displayTo);
         }
 }
 
@@ -2852,7 +3442,27 @@ function zeroBtn(){
                                         refocusInput("currValInput");
                                 }
                         }
-                }else{
+                }else if(isVisible(document.getElementById("matrixEditorDiv"))){
+                        displayInput('0', "matrixEditInput");
+                        refocusInput("matrixEditInput");
+                }else if(isVisible(document.getElementById("yEqDiv"))){
+                        let displayTo = focusedEq.id;
+                        let origArr = [currY1Orig, currY2Orig, currY3Orig, currY4Orig, currY5Orig, currY6Orig, currY7Orig, currY8Orig, currY9Orig, currY10Orig];
+                        let num = parseInt(displayTo[1]);
+        
+                        if(secondOn){
+                                toggle2nd();
+                        }else if(alphaOn){
+                                displayInput(" ", displayTo);
+                                origArr[num - 1] += ' ';
+                                toggleAlpha();
+                        }else{
+                                displayInput('0', displayTo);
+                                origArr[num - 1] += '0';
+                        }
+                        refocusInput(displayTo);
+                }
+                else{
                         if(alphaOn){
                                 toggleAlpha();
                                 refocusInput("userInput");
@@ -3766,7 +4376,6 @@ function listNamesChoose(val){
 
 function matrixNamesChoose(val){
         let matrices = ["A", "B", "C", "D", "E", "F", "G", "H","I", "J"];
-        let matricesVals = [matrixA, matrixB,matrixC,matrixD,matrixE,matrixF,matrixG,matrixH,matrixI,matrixJ];
         showScreen("normDiv");
         displayInput("[" + matrices[val - 1] + "]", "userInput");
         currFormatted += "[" + matrices[val - 1] + "]";
@@ -3814,30 +4423,66 @@ function matrixMathChoose(v){
         if(v == 1){
                 showScreen("normDiv");
                 displayInput("det(", "userInput");
+                currFormatted += 'det(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'det(';
                 refocusInput("userInput");
         }else if(v == 2){
                 showScreen("normDiv");
-                displayInput("ᵀ", "userInput");
+                displayInput(")^T", "userInput");
+                currFormatted += ')^T';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += ')^T';
                 refocusInput("userInput");
         }else if(v == 3){
                 showScreen("normDiv");
                 displayInput("dim(", "userInput");
+                currFormatted += 'dim(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'dim(';
                 refocusInput("userInput");
         }else if(v == 4){
+                //makes every value in matrix first value
                 showScreen("normDiv");
                 displayInput("fill(", "userInput");
+                currFormatted += 'fill(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'fill(';
                 refocusInput("userInput");
-        }else if(v == 5){
+        }else if(v == 5){ //identity(n) makes n x n identity matrix
                 showScreen("normDiv");
                 displayInput("identity(", "userInput");
+                currFormatted += 'identity(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'identity(';
                 refocusInput("userInput");
-        }else if(v == 6){
+        }else if(v == 6){ //randM(rows, cols), makes matrix of rows and cols with rand vals
                 showScreen("normDiv");
                 displayInput("randM(", "userInput");
+                currFormatted += 'randM(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'randM(';
                 refocusInput("userInput");
-        }else if(v == 7){
+        }else if(v == 7){ // auguments matrix
                 showScreen("normDiv");
-                displayInput("identity(", "userInput");
+                displayInput("augment(", "userInput");
+                currFormatted += 'augment(';
+                currFormatted = parseFormatted(currFormatted);
+                document.getElementById("formattedEq").innerHTML = currFormatted;
+                katex.render(currFormatted, document.getElementById("formattedEq"), {throwOnError: false});
+                currInputOrig += 'augment(';
                 refocusInput("userInput");
         }
 }
